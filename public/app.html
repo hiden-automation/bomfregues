@@ -51,7 +51,7 @@
     /* Header com Logo Livre */
     .top-header {
       background: var(--cor-primaria) !important;
-      padding: 24px 20px 36px 20px;
+      padding: 24px 20px 30px 20px;
       border-radius: 0 0 28px 28px;
       display: flex;
       align-items: center;
@@ -93,26 +93,29 @@
       margin-top: 3px; 
     }
 
-    /* Container Principal com Margens Alinhadas */
+    /* Container Principal com respiro vertical garantido */
     .container-app {
       max-width: 480px;
       margin: 0 auto;
-      padding: 0 16px;
+      padding: 24px 16px 0 16px;
       position: relative;
     }
 
     /* Zona Flutuante Entre o Header e o Body */
     .floating-layer-container {
-      margin-top: -20px;
-      margin-bottom: 20px;
-      position: relative;
-      z-index: 20;
       display: flex;
       flex-direction: column;
       gap: 12px;
+      position: relative;
+      z-index: 20;
     }
 
-    /* Botão Flutuante de Notificação Push */
+    .floating-layer-container.has-floating {
+      margin-top: -36px;
+      margin-bottom: 18px;
+    }
+
+    /* Botão Flutuante de Push */
     .btn-push-floating {
       background: #ffffff;
       color: var(--cor-destaque);
@@ -142,7 +145,7 @@
       border-radius: 18px;
       padding: 14px 18px;
       box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-      display: flex;
+      display: none;
       flex-direction: column;
       gap: 4px;
     }
@@ -165,12 +168,13 @@
       text-decoration: underline;
     }
 
-    /* Título das Seções com Margem Correta */
+    /* Título das Seções com espaçamento limpo e sem aperto */
     .headline-bar {
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 800;
       color: var(--cor-texto);
-      margin: 18px 4px 14px;
+      margin: 8px 4px 16px 4px;
+      letter-spacing: -0.3px;
     }
 
     /* Cartão de Pontos */
@@ -322,6 +326,21 @@
       OneSignal.User.PushSubscription.addEventListener("change", checarStatusPush);
     });
 
+    function sincronizarCamadaFlutuante() {
+      const container = document.getElementById('floating-container');
+      const btnPush = document.getElementById('btn-push-action');
+      const alertaCpf = document.getElementById('alerta-vincular');
+
+      const pushVisivel = btnPush && btnPush.style.display !== 'none';
+      const cpfVisivel = alertaCpf && alertaCpf.style.display !== 'none';
+
+      if (pushVisivel || cpfVisivel) {
+        container.classList.add('has-floating');
+      } else {
+        container.classList.remove('has-floating');
+      }
+    }
+
     function checarStatusPush() {
       const btn = document.getElementById('btn-push-action');
       if (!btn) return;
@@ -330,12 +349,12 @@
       const inscrito = window.OneSignal?.User?.PushSubscription?.optedIn ?? false;
       const permitido = ("Notification" in window) && Notification.permission === "granted";
       
-      // O botão de notificações só aparece após o usuário instalar o PWA no celular e caso ainda não tenha ativado
       if (isStandalone && (!inscrito || !permitido)) {
         btn.style.display = 'inline-flex';
       } else {
         btn.style.display = 'none';
       }
+      sincronizarCamadaFlutuante();
     }
 
     async function ativarPush() {
@@ -353,7 +372,7 @@
 </head>
 <body>
 
-  <!-- Header Livre com Cores e Logo -->
+  <!-- Header Livre -->
   <header class="top-header">
     <div class="clean-logo-wrap">
       <img class="dinamico-logo" src="" alt="Logo" style="display:none;" id="logo-img-header">
@@ -365,15 +384,13 @@
   </header>
 
   <div class="container-app">
-    <!-- Camada Flutuante Entre Header e Body -->
-    <div class="floating-layer-container">
-      <!-- Botão Flutuante de Push (aparece após a instalação) -->
+    <!-- Camada Flutuante Inteligente (Só sobrepõe quando tiver itens visíveis) -->
+    <div class="floating-layer-container" id="floating-container">
       <button id="btn-push-action" class="btn-push-floating" onclick="ativarPush()">
         Receber avisos de promoções
       </button>
 
-      <!-- Banner Flutuante de CPF (somente na aba de fidelidade) -->
-      <div id="alerta-vincular" class="cpf-floating-card" style="display:none;">
+      <div id="alerta-vincular" class="cpf-floating-card">
         <div class="cpf-floating-title">
           Seus pontos estão salvos neste aparelho. Vincule seu CPF para recuperar seu saldo caso troque de celular.
         </div>
@@ -441,13 +458,13 @@
       btn.classList.add('active');
       document.getElementById(viewId).classList.add('active');
 
-      // Controla a exibição do alerta de CPF apenas na aba de fidelidade
       const alertaCpf = document.getElementById('alerta-vincular');
       if (viewId === 'view-fidelidade' && !usuarioTemCpfVinculado) {
         alertaCpf.style.display = 'flex';
       } else {
         alertaCpf.style.display = 'none';
       }
+      sincronizarCamadaFlutuante();
     }
 
     function fecharModalIos() {
@@ -485,6 +502,7 @@
         if (data.cpf) {
           usuarioTemCpfVinculado = true;
           document.getElementById('alerta-vincular').style.display = 'none';
+          sincronizarCamadaFlutuante();
         }
       } catch (e) { document.getElementById('user-pontos').innerHTML = `-- <span>pts</span>`; }
     }
@@ -531,6 +549,7 @@
         const data = await Api.vincularCpf(COMERCIO_SLUG, MEU_DEVICE_ID, limpo);
         usuarioTemCpfVinculado = true;
         document.getElementById('alerta-vincular').style.display = 'none';
+        sincronizarCamadaFlutuante();
         document.getElementById('user-pontos').innerHTML = `${data.pontos} <span>pts</span>`;
         alert("CPF vinculado com sucesso!");
       } catch (e) { alert("Erro: " + e.message); }
