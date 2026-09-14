@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Carregando...</title>
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#121212">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/global.css">
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+  <style>
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .tab-view { display: none; }
+    .tab-view.active { display: block; }
+
+    /* Header com Logo Livre: sem círculo, sem fundo e sem borda */
+    .top-header {
+      background: linear-gradient(180deg, var(--cor-primaria) 0%, #150505 100%);
+      padding: 24px 20px 28px 20px;
+      border-radius: 0 0 24px 24px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    .clean-logo-wrap {
+      width: 54px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+    }
+
+    .clean-logo-wrap img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .header-text-group { margin-left: 14px; }
+    .header-title-clean { font-size: 17px; font-weight: 800; color: #ffffff; line-height: 1.2; }
+    .header-sub-clean { font-size: 11px; color: #f1f5f9; opacity: 0.85; margin-top: 2px; }
+
+    .pwa-actions-wrapper {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-action-clean {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+    }
+
+    .btn-install {
+      background: #ffffff;
+      color: #0f172a;
+      border: 1.5px solid #e2e8f0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+    }
+
+    .btn-push {
+      background: var(--cor-destaque);
+      color: #ffffff;
+    }
+
+    .points-hub-card {
+      background: #ffffff;
+      border: 1px solid var(--cor-borda);
+      border-radius: 20px;
+      padding: 24px 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+
+    .points-total {
+      font-size: 50px;
+      font-weight: 800;
+      color: var(--cor-texto);
+      line-height: 1;
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .points-total span {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--cor-destaque);
+    }
+
+    .points-label-sub {
+      font-size: 11px;
+      color: var(--cor-subtexto);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 6px 0 20px;
+    }
+
+    .btn-scan-trigger {
+      width: 100%;
+      background: var(--cor-destaque);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #reader-container {
+      display: none;
+      margin-top: 16px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid var(--cor-destaque);
+      background: #000;
+    }
+
+    #reader video { width: 100% !important; object-fit: cover !important; }
+
+    .cpf-box-clean {
+      background: var(--cor-secundaria);
+      border: 1px solid var(--cor-destaque);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--cor-texto);
+    }
+
+    .cpf-box-clean button {
+      background: none;
+      border: none;
+      color: var(--cor-destaque);
+      font-weight: 700;
+      text-decoration: underline;
+      cursor: pointer;
+      display: block;
+      margin-top: 4px;
+    }
+
+    .headline-bar {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--cor-texto);
+      margin: 22px 2px 12px;
+    }
+
+    .showcase-card {
+      background: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      border: 1px solid var(--cor-borda);
+    }
+
+    .showcase-media {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      display: block;
+      background: #f1f5f9;
+    }
+
+    .showcase-info {
+      padding: 16px;
+    }
+
+    .showcase-badge {
+      display: inline-block;
+      background: var(--cor-secundaria);
+      color: var(--cor-destaque);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .showcase-title { font-size: 16px; font-weight: 800; color: var(--cor-texto); margin-bottom: 4px; }
+    .showcase-desc { font-size: 12px; color: var(--cor-subtexto); line-height: 1.4; margin-bottom: 10px; }
+
+    .showcase-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    .cost-badge {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--cor-destaque);
+      background: var(--cor-secundaria);
+      padding: 5px 10px;
+      border-radius: 6px;
+    }
+
+    .btn-claim {
+      background: var(--cor-primaria);
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .ios-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+    .ios-sheet {
+      position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff;
+      border-radius: 20px 20px 0 0; padding: 26px 20px 32px; max-width: 440px; margin: 0 auto;
+      z-index: 1000; transform: translateY(100%); transition: transform 0.3s ease-out;
+    }
+    .ios-sheet.active { transform: translateY(0); }
+  </style>
+
+  <script src="js/api.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({ appId: "3848f19b-f5ef-45a5-a307-ad0a89725eb1", welcomeNotification: { disable: true } });
+      await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
+      checarStatusPush();
+      OneSignal.User.PushSubscription.addEventListener("change", checarStatusPush);
+    });
+
+    function checarStatusPush() {
+      const btn = document.getElementById('btn-push-action');
+      if (!btn) return;
+      const inscrito = window.OneSignal?.User?.PushSubscription?.optedIn ?? false;
+      const permitido = ("Notification" in window) && Notification.permission === "granted";
+      btn.style.display = (inscrito && permitido) ? 'none' : 'block';
+    }
+
+    async function ativarPush() {
+      window.OneSignalDeferred.push(async function(OneSignal) {
+        try {
+          await OneSignal.Notifications.requestPermission();
+          await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
+          await OneSignal.User.PushSubscription.optIn();
+          alert("Notificacoes ativadas!");
+          checarStatusPush();
+        } catch (e) { alert("Erro: " + e.message); }
+      });
+    }
+  </script>
+</head>
+<body>
+
+  <header class="top-header">
+    <div class="clean-logo-wrap">
+      <img class="dinamico-logo" src="" alt="Logo" style="display:none;" id="logo-img-header">
+    </div>
+    <div class="header-text-group">
+      <div class="header-title-clean dinamico-nome">Carregando...</div>
+      <div class="header-sub-clean">Clube de Vantagens & Ofertas</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="pwa-actions-wrapper">
+      <button id="btn-install-action" class="btn-action-clean btn-install" onclick="acionarInstalacao()">
+        Instalar Aplicativo no Celular
+      </button>
+
+      <button id="btn-push-action" class="btn-action-clean btn-push" onclick="ativarPush()" style="display:none;">
+        Receber Avisos de Promocoes
+      </button>
+    </div>
+
+    <!-- Ofertas -->
+    <div id="view-promos" class="tab-view active">
+      <div class="headline-bar">Ofertas da Loja</div>
+      <div id="lista-promos">Carregando ofertas...</div>
+    </div>
+
+    <!-- Fidelidade -->
+    <div id="view-fidelidade" class="tab-view">
+      <div id="alerta-vincular" class="cpf-box-clean">
+        Seus pontos estao salvos apenas neste aparelho. Vincule seu CPF para recuperar seu saldo caso troque de celular.
+        <button onclick="vincularCpfModal()">Vincular CPF</button>
+      </div>
+
+      <div class="points-hub-card">
+        <div class="points-total" id="user-pontos">-- <span>pts</span></div>
+        <div class="points-label-sub">Saldo Disponivel</div>
+
+        <button class="btn-scan-trigger" onclick="iniciarScanner()" id="btn-scan">
+          Escanear QR Code da Nota Fiscal
+        </button>
+
+        <div id="reader-container">
+          <div id="reader"></div>
+          <button class="btn-action-clean btn-install" style="margin-top:10px;" onclick="pararScanner()">Cancelar Leitura</button>
+        </div>
+      </div>
+
+      <div class="headline-bar">Catalogo de Resgate</div>
+      <div id="lista-premios">Carregando premios...</div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item active" id="nav-btn-promos" onclick="navegarAba('view-promos', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+      Ofertas
+    </a>
+    <a class="nav-item" id="nav-btn-fidelidade" onclick="navegarAba('view-fidelidade', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line></svg>
+      Fidelidade
+    </a>
+  </nav>
+
+  <!-- Modal Tutorial iPhone Safari -->
+  <div class="ios-overlay" id="iosOverlay" onclick="fecharModalIos()"></div>
+  <div class="ios-sheet" id="iosSheet">
+    <h3 style="font-size:16px; font-weight:800; text-align:center; margin-bottom:4px;">Instalar no iPhone</h3>
+    <p style="font-size:12px; color:var(--cor-subtexto); text-align:center; margin-bottom:18px;">Adicione o app a Tela de Inicio em dois passos:</p>
+
+    <div style="font-size:13px; margin-bottom:12px;">1. Na barra inferior do Safari, toque no botao <strong>Compartilhar</strong>.</div>
+    <div style="font-size:13px; margin-bottom:20px;">2. Role e toque em <strong>Adicionar a Tela de Inicio</strong>.</div>
+
+    <button class="btn-action-clean btn-install" onclick="fecharModalIos()">Entendido</button>
+  </div>
+
+  <script>
+    const FOTO_PADRAO = "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=500&q=80";
+    let html5QrcodeScanner = null;
+
+    function navegarAba(viewId, btn) {
+      document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(viewId).classList.add('active');
+    }
+
+    const isIos = () => /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    const btnInstall = document.getElementById('btn-install-action');
+
+    if (isStandalone) btnInstall.style.display = 'none';
+
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
+
+    async function acionarInstalacao() {
+      if (isIos()) {
+        document.getElementById('iosOverlay').style.display = 'block';
+        setTimeout(() => document.getElementById('iosSheet').classList.add('active'), 10);
+      } else if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        if (outcome === 'accepted') btnInstall.style.display = 'none';
+      } else {
+        alert("Toque no menu do navegador e selecione 'Adicionar a tela inicial'.");
+      }
+    }
+
+    function fecharModalIos() {
+      document.getElementById('iosSheet').classList.remove('active');
+      setTimeout(() => document.getElementById('iosOverlay').style.display = 'none', 300);
+    }
+
+    async function carregarOfertas() {
+      const box = document.getElementById('lista-promos');
+      try {
+        const promocoes = await Api.listarPromocoes(COMERCIO_SLUG);
+        if (!promocoes.length) {
+          box.innerHTML = `<div class="showcase-card" style="padding:24px; text-align:center; font-size:13px; color:var(--cor-subtexto);">Nenhuma promocao ativa no momento.</div>`;
+          return;
+        }
+
+        box.innerHTML = promocoes.map(p => `
+          <div class="showcase-card">
+            <img class="showcase-media" src="${p.imagem_url || FOTO_PADRAO}">
+            <div class="showcase-info">
+              <span class="showcase-badge">Oferta</span>
+              <h4 class="showcase-title">${p.titulo}</h4>
+              <p class="showcase-desc">${p.descricao}</p>
+              <div style="font-size:11px; font-weight:700; color:var(--cor-destaque);">${p.validade}</div>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) { box.innerHTML = `<p style="color:#ef4444; font-size:12px;">${err.message}</p>`; }
+    }
+
+    async function carregarPontos() {
+      try {
+        const data = await Api.obterPontos(COMERCIO_SLUG, MEU_DEVICE_ID);
+        document.getElementById('user-pontos').innerHTML = `${data.pontos} <span>pts</span>`;
+        if (data.cpf) document.getElementById('alerta-vincular').style.display = 'none';
+      } catch (e) { document.getElementById('user-pontos').innerHTML = `-- <span>pts</span>`; }
+    }
+
+    async function carregarPremios() {
+      const box = document.getElementById('lista-premios');
+      try {
+        const premios = await Api.listarPremios(COMERCIO_SLUG);
+        if (!premios.length) {
+          box.innerHTML = `<div class="showcase-card" style="padding:24px; text-align:center; font-size:13px; color:var(--cor-subtexto);">Nenhum premio cadastrado.</div>`;
+          return;
+        }
+
+        box.innerHTML = premios.map(p => `
+          <div class="showcase-card">
+            <img class="showcase-media" src="${p.imagem_url || FOTO_PADRAO}">
+            <div class="showcase-info">
+              <h4 class="showcase-title">${p.titulo}</h4>
+              <div class="showcase-footer">
+                <span class="cost-badge">${p.pontos} pts</span>
+                <button class="btn-claim" onclick="resgatarItem(${p.id}, '${p.titulo}')">Resgatar</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) { box.innerHTML = `<p style="color:#ef4444; font-size:12px;">${e.message}</p>`; }
+    }
+
+    async function resgatarItem(id, titulo) {
+      if (!confirm(`Resgatar "${titulo}"?`)) return;
+      try {
+        const data = await Api.resgatarPremio(COMERCIO_SLUG, MEU_DEVICE_ID, id);
+        alert(`Resgate confirmado!\nSaldo: ${data.saldoFinal} pts.`);
+        document.getElementById('user-pontos').innerHTML = `${data.saldoFinal} <span>pts</span>`;
+      } catch (err) { alert("Erro: " + err.message); }
+    }
+
+    async function vincularCpfModal() {
+      const cpf = prompt("Digite seu CPF (11 numeros):");
+      if (!cpf) return;
+      const limpo = cpf.replace(/\D/g, '');
+      if (limpo.length !== 11) return alert("CPF invalido.");
+      try {
+        const data = await Api.vincularCpf(COMERCIO_SLUG, MEU_DEVICE_ID, limpo);
+        document.getElementById('alerta-vincular').style.display = 'none';
+        document.getElementById('user-pontos').innerHTML = `${data.pontos} <span>pts</span>`;
+        alert("CPF vinculado!");
+      } catch (e) { alert("Erro: " + e.message); }
+    }
+
+    function iniciarScanner() {
+      document.getElementById('btn-scan').style.display = 'none';
+      document.getElementById('reader-container').style.display = 'block';
+
+      if (html5QrcodeScanner) { try { html5QrcodeScanner.clear(); } catch(e) {} }
+
+      html5QrcodeScanner = new Html5Qrcode("reader");
+      html5QrcodeScanner.start(
+        { facingMode: "user" },
+        { fps: 15, qrbox: { width: 220, height: 220 } },
+        (decodedText) => { pararScanner(); processarNota(decodedText); },
+        () => {}
+      ).catch(err => { alert("Erro na camera: " + (err.message || err)); pararScanner(); });
+    }
+
+    function pararScanner() {
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner.stop().then(() => {
+          document.getElementById('btn-scan').style.display = 'block';
+          document.getElementById('reader-container').style.display = 'none';
+        });
+      }
+    }
+
+    async function processarNota(urlNota) {
+      const btn = document.getElementById('btn-scan');
+      btn.innerText = "Validando cupom...";
+      btn.disabled = true;
+      try {
+        const data = await Api.processarNotaFiscal(COMERCIO_SLUG, MEU_DEVICE_ID, urlNota);
+        document.getElementById('user-pontos').innerHTML = `${data.novosPontos} <span>pts</span>`;
+        alert(`Cupom validado! +${data.pontosGanhos} pontos.`);
+      } catch (err) { alert("Erro: " + err.message); }
+      finally {
+        btn.innerText = "Escanear QR Code da Nota Fiscal";
+        btn.disabled = false;
+      }
+    }
+
+    (async () => {
+      const dados = await inicializarTema();
+      if (dados?.logo_url) {
+        const img = document.getElementById('logo-img-header');
+        img.src = dados.logo_url;
+        img.style.display = 'block';
+      }
+      await carregarOfertas();
+      await carregarPontos();
+      await carregarPremios();
+    })();
+  </script>
+</body>
+</html>

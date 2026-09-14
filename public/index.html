@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bom Freguês — Crie o app de fidelidade do seu comércio em minutos</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #121212;
+      --accent-gradient: linear-gradient(135deg, #ea580c 0%, #db2777 100%);
+      --bg: #ffffff;
+      --text: #171717;
+      --muted: #525252;
+      --border: #f0ede6;
+      --card-border: #f2eee8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    section, header, div[id] {
+      scroll-margin-top: 95px;
+    }
+
+    /* Navbar Full Width */
+    .navbar-wrapper {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(240, 237, 230, 0.85);
+    }
+
+    .navbar {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-logo {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 26px;
+      color: #111;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-dot {
+      color: #ea580c;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-size: 14px;
+      color: #525252;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+
+    .nav-links a:hover {
+      color: #000;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .btn-pill-dark {
+      background: #121212;
+      color: #ffffff;
+      padding: 10px 22px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-pill-dark:hover {
+      background: #2a2a2a;
+      transform: translateY(-1px);
+    }
+
+    /* Hero */
+    .hero {
+      max-width: 1200px;
+      margin: 20px auto 60px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .announcement-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      color: #92400e;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .hero-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 60px;
+      line-height: 1.1;
+      color: #111;
+      letter-spacing: -1.8px;
+      margin-bottom: 22px;
+    }
+
+    .hero-title .gradient-italic {
+      font-style: italic;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      padding-right: 4px;
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      color: #525252;
+      line-height: 1.6;
+      margin-bottom: 34px;
+      max-width: 520px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .btn-hero-primary {
+      background: #121212;
+      color: #ffffff;
+      padding: 15px 28px;
+      border-radius: 9999px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+      transition: all 0.2s;
+    }
+
+    .btn-hero-primary:hover {
+      background: #2a2a2a;
+      transform: translateY(-2px);
+    }
+
+    .btn-hero-secondary {
+      font-size: 14px;
+      color: #525252;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .btn-hero-secondary:hover {
+      color: #000;
+    }
+
+    /* Polaroids Hero */
+    .hero-visual {
+      position: relative;
+      min-height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .polaroid {
+      background: #ffffff;
+      padding: 10px 10px 28px 10px;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.06);
+      border: 1px solid #f0ede8;
+      position: absolute;
+    }
+
+    .polaroid img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      display: block;
+    }
+
+    .polaroid-1 {
+      width: 220px;
+      height: 290px;
+      top: 10px;
+      left: 10px;
+      transform: rotate(-7deg);
+      z-index: 1;
+    }
+
+    .polaroid-2 {
+      width: 210px;
+      height: 270px;
+      top: 20px;
+      right: 15px;
+      transform: rotate(8deg);
+      z-index: 2;
+    }
+
+    .polaroid-main {
+      width: 260px;
+      height: 350px;
+      top: 70px;
+      left: 70px;
+      transform: rotate(-1deg);
+      z-index: 3;
+      padding: 12px 12px 34px 12px;
+      border: 1px solid #e7e2db;
+      box-shadow: 0 28px 60px -15px rgba(0,0,0,0.22);
+    }
+
+    .polaroid-main .polaroid-badge {
+      position: absolute;
+      bottom: 8px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 11px;
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-style: italic;
+      color: #a8a29e;
+    }
+
+    .polaroid-tag-overlay {
+      position: absolute;
+      bottom: 46px;
+      left: 20px;
+      right: 20px;
+      background: rgba(18, 18, 18, 0.88);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .polaroid-tag-overlay div:first-child {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .polaroid-tag-overlay div:last-child {
+      font-size: 10px;
+      color: #fbbf24;
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    /* Trust Bar */
+    .trust-bar {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: #fafaf8;
+      padding: 22px 24px;
+    }
+
+    .trust-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #404040;
+    }
+
+    .trust-item svg {
+      width: 18px;
+      height: 18px;
+      color: #ea580c;
+    }
+
+    /* Seções Gerais */
+    .section-wrap {
+      max-width: 1200px;
+      margin: 80px auto;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .section-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #ea580c;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .section-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 46px;
+      letter-spacing: -1.2px;
+      color: #111;
+      margin-bottom: 16px;
+    }
+
+    .section-sub {
+      font-size: 16px;
+      color: #525252;
+      max-width: 620px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    /* ======================================================== */
+    /* CARROSSEL COM SETA LATERAL DIREITA EM PRETO             */
+    /* ======================================================== */
+    .carousel-section {
+      background: #fafaf8;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 85px 24px;
+    }
+
+    .carousel-container {
+      max-width: 1080px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* Botão de seta fixado na lateral direita em preto chamativo */
+    .arrow-btn-side-right {
+      position: absolute;
+      right: -24px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid #2a2a2a;
+      background: #121212;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 15;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .arrow-btn-side-right svg {
+      width: 22px;
+      height: 22px;
+      stroke: #ffffff;
+    }
+
+    .arrow-btn-side-right:hover {
+      background: #000000;
+      transform: translateY(-50%) scale(1.08);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.4);
+    }
+
+    .carousel-viewport {
+      overflow: hidden;
+      border-radius: 28px;
+      background: #ffffff;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 20px 48px -15px rgba(0,0,0,0.06);
+      touch-action: pan-y;
+      cursor: grab;
+    }
+
+    .carousel-viewport:active {
+      cursor: grabbing;
+    }
+
+    .carousel-track {
+      display: flex;
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 100%;
+    }
+
+    .carousel-slide {
+      min-width: 100%;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      padding: 56px 52px;
+      align-items: center;
+      text-align: left;
+    }
+
+    .slide-text-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .slide-badge-category {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #ea580c;
+      margin-bottom: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .slide-title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 36px;
+      line-height: 1.15;
+      color: #111;
+      margin-bottom: 16px;
+      letter-spacing: -0.8px;
+    }
+
+    .slide-desc {
+      font-size: 15px;
+      color: #525252;
+      line-height: 1.65;
+      margin-bottom: 24px;
+    }
+
+    .slide-points-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .slide-points-list li {
+      font-size: 13px;
+      color: #262626;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .slide-points-list li span.check-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #ecfdf5;
+      color: #059669;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .slide-visual-col {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide-mockup-frame {
+      width: 100%;
+      max-width: 380px;
+      background: #fafaf8;
+      border: 1px solid #e7e5e4;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 16px 36px -8px rgba(0,0,0,0.06);
+    }
+
+    .mock-push-box {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+    .mock-push-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .mock-push-img {
+      width: 100%;
+      height: 140px;
+      border-radius: 10px;
+      object-fit: cover;
+      margin-top: 8px;
+    }
+
+    .mock-ticket-box {
+      background: #ffffff;
+      border: 2px dashed #cbd5e1;
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .mock-reward-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .carousel-nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 24px;
+      padding: 0 10px;
+    }
+
+    .carousel-dots {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 9999px;
+      background: #d4d4d4;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .dot-indicator.active {
+      width: 28px;
+      background: #121212;
+    }
+
+    /* Segmentos */
+    .segments-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      text-align: left;
+    }
+
+    .segment-card {
+      border-radius: 20px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.03);
+      transition: transform 0.2s;
+    }
+
+    .segment-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .segment-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .segment-body {
+      padding: 22px;
+    }
+
+    .segment-body h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #111;
+    }
+
+    .segment-body p {
+      font-size: 13px;
+      color: #525252;
+      line-height: 1.5;
+    }
+
+    /* Como Funciona com Ícones Vetoriais Sofisticados */
+    .how-it-works-line {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 36px;
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .how-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .step-box-icon {
+      width: 76px;
+      height: 76px;
+      background: #fffaf0;
+      border: 1px solid #fee8c8;
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.08);
+    }
+
+    .step-box-icon svg {
+      width: 32px;
+      height: 32px;
+      stroke: #ea580c;
+    }
+
+    .step-number {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #111;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .how-step h4 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 8px;
+    }
+
+    .how-step p {
+      font-size: 13px;
+      color: #525252;
+      line-height: 1.55;
+      max-width: 290px;
+    }
+
+    /* FAQ */
+    .faq-container {
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+    }
+
+    .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: #171717;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .faq-question span {
+      font-size: 20px;
+      color: #a3a3a3;
+      transition: transform 0.2s;
+    }
+
+    .faq-answer {
+      display: none;
+      font-size: 14px;
+      color: #525252;
+      line-height: 1.6;
+      margin-top: 10px;
+    }
+
+    .faq-item.active .faq-answer {
+      display: block;
+    }
+
+    .faq-item.active .faq-question span {
+      transform: rotate(45deg);
+      color: #ea580c;
+    }
+
+    /* Setup / Cadastro */
+    .setup-section {
+      background: #000000;
+      border-top: 1px solid var(--border);
+      padding: 90px 24px;
+    }
+
+    .setup-box {
+      max-width: 640px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 28px;
+      border: 1px solid var(--card-border);
+      padding: 44px;
+      box-shadow: 0 20px 48px -15px rgba(0,0,0,0.06);
+    }
+
+    .form-group-item {
+      margin-bottom: 20px;
+    }
+
+    .form-group-item label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #262626;
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid #e5e5e5;
+      background: #fafafa;
+      border-radius: 12px;
+      font-size: 14px;
+      color: #171717;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .form-input:focus {
+      background: #ffffff;
+      border-color: #171717;
+    }
+
+    .input-error-msg {
+      font-size: 11px;
+      color: #dc2626;
+      font-weight: 600;
+      margin-top: 5px;
+      display: none;
+    }
+
+    /* Seletor Manual Amigável de Cores */
+    .color-manual-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .color-card-friendly {
+      background: #fafafa;
+      border: 1.5px solid #e5e5e5;
+      border-radius: 16px;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .color-card-friendly:focus-within {
+      border-color: #171717;
+      background: #ffffff;
+    }
+
+    .color-circle-button {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 3px solid #ffffff;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.15s;
+    }
+
+    .color-circle-button:hover {
+      transform: scale(1.06);
+    }
+
+    .color-input-popup {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      border: none;
+      padding: 0;
+    }
+
+    .color-role-text {
+      font-size: 11px;
+      font-weight: 700;
+      color: #404040;
+      text-align: center;
+    }
+
+    .color-hex-badge {
+      width: 100%;
+      border: 1px solid #e5e5e5;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #171717;
+      text-align: center;
+      outline: none;
+    }
+
+    /* Botão Principal Sempre Preto */
+    .btn-create-submit {
+      width: 100%;
+      background: #000000 !important;
+      color: #ffffff !important;
+      padding: 16px;
+      border-radius: 9999px;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 24px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    }
+
+    .btn-create-submit:hover:not(:disabled) {
+      background: #2a2a2a !important;
+      transform: translateY(-1px);
+    }
+
+    .btn-create-submit:disabled {
+      cursor: not-allowed;
+      opacity: 0.85;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Sucesso */
+    #box-sucesso-app {
+      display: none;
+      text-align: center;
+    }
+
+    .chip-saida {
+      background: #f5f5f4;
+      border: 1px solid #e7e5e4;
+      padding: 14px;
+      border-radius: 12px;
+      text-align: left;
+      margin-bottom: 12px;
+    }
+
+    .chip-saida a {
+      color: #ea580c;
+      font-weight: 700;
+      font-size: 13px;
+      word-break: break-all;
+      text-decoration: none;
+    }
+
+    .site-footer {
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: #737373;
+    }
+
+    @media (max-width: 960px) {
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; text-align: center; gap: 40px; }
+      .hero-title { font-size: 40px; }
+      .hero-sub { margin-left: auto; margin-right: auto; }
+      .hero-ctas { justify-content: center; }
+      .hero-visual { min-height: 380px; }
+      .polaroid-1 { width: 170px; height: 230px; }
+      .polaroid-2 { width: 160px; height: 220px; }
+      .polaroid-main { width: 210px; height: 290px; left: 50px; top: 40px; }
+      
+      .arrow-btn-side-right {
+        right: 8px;
+        width: 44px;
+        height: 44px;
+      }
+
+      .carousel-slide {
+        grid-template-columns: 1fr;
+        padding: 36px 24px;
+        gap: 28px;
+      }
+      .slide-title { font-size: 28px; }
+
+      .segments-grid { grid-template-columns: 1fr; }
+      .how-it-works-line { grid-template-columns: 1fr; gap: 30px; }
+      .setup-box { padding: 26px 20px; }
+      .color-manual-grid { grid-template-columns: 1fr; }
+      .color-card-friendly { flex-direction: row; justify-content: space-between; padding: 12px 16px; }
+      .color-hex-badge { width: 90px; }
+    }
+  </style>
+
+  <script src="js/api.js"></script>
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+  <!-- Navbar Full Width -->
+  <div class="navbar-wrapper">
+    <nav class="navbar">
+      <a href="#" class="brand-logo">
+        Bom Freguês<span class="brand-dot">.</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#como-funciona">Como funciona</a></li>
+        <li><a href="#para-quem">Para quem</a></li>
+        <li><a href="#funcionalidades">Funcionalidades</a></li>
+        <li><a href="#faq">Perguntas</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="./login.html" class="btn-pill-dark">Criar app grátis</a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="announcement-badge">
+        🎉 Fidelidade moderna: fidelize seus clientes sem cartões de papel
+      </div>
+
+      <h1 class="hero-title">
+        Crie o <span class="gradient-italic">app de fidelidade</span> do seu comércio em minutos.
+      </h1>
+
+      <p class="hero-sub">
+        PWA próprio para o seu negócio: pontuação automática por QR Code da nota fiscal, catálogo de prêmios e disparo de notificações push direto no celular dos seus clientes.
+      </p>
+
+      <div class="hero-ctas">
+        <a href="./login.html" class="btn-hero-primary">
+          Criar meu app em minutos &rarr;
+        </a>
+        <a href="#como-funciona" class="btn-hero-secondary">
+          Ver como funciona
+        </a>
+      </div>
+    </div>
+
+    <!-- Polaroids Hero -->
+    <div class="hero-visual">
+      <div class="polaroid polaroid-1">
+        <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80" alt="Café Especial">
+      </div>
+      <div class="polaroid polaroid-2">
+        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=600&q=80" alt="Barbearia">
+      </div>
+      <div class="polaroid polaroid-main">
+        <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=85" alt="Cafeteria">
+        <div class="polaroid-tag-overlay">
+          <div>Café do Bairro</div>
+          <div>✓ 100 pontos acumulados</div>
+        </div>
+        <div class="polaroid-badge">Feito no Bom Freguês</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Trust Bar -->
+  <section class="trust-bar">
+    <div class="trust-inner">
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Assinatura muito acessível
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Leitor de Nota com Trava por CNPJ
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Setup em menos de 5 minutos
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Notificações Push no Celular
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO FUNCIONALIDADES COM CARROSSEL E SETA LATERAL DIREITA EM PRETO -->
+  <section class="carousel-section" id="funcionalidades">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+      <span class="section-tag">Recursos do Sistema</span>
+      <h2 class="section-title">O que o Bom Freguês faz por você</h2>
+      <p class="section-sub">
+        Explore cada ferramenta desenvolvida para aumentar a frequência de compra do seu público.
+      </p>
+
+      <!-- Estrutura do Carrossel com Seta na Lateral Direita -->
+      <div class="carousel-container">
+        <button class="arrow-btn-side-right" onclick="proximoSlide()" title="Próximo Recurso">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+
+        <div class="carousel-viewport" id="carouselViewport">
+          <div class="carousel-track" id="carouselTrack">
+            
+            <!-- Slide 1: Promoções -->
+            <div class="carousel-slide">
+              <div class="slide-text-col">
+                <span class="slide-badge-category">Vitrine Inteligente</span>
+                <h3 class="slide-title">Publique promoções em tempo real</h3>
+                <p class="slide-desc">
+                  Suba fotos de combos, defina prazos de validade e coloque suas ofertas no ar direto pelo celular. O cliente acessa a vitrine limpa e atraente sem precisar de login prévio.
+                </p>
+                <ul class="slide-points-list">
+                  <li><span class="check-icon">✓</span> Fotos otimizadas e comprimidas automaticamente</li>
+                  <li><span class="check-icon">✓</span> Avisos de validade com contador de tempo</li>
+                  <li><span class="check-icon">✓</span> Criação e exclusão instantânea no painel</li>
+                </ul>
+              </div>
+              <div class="slide-visual-col">
+                <div class="slide-mockup-frame">
+                  <div style="font-size:12px; font-weight:700; color:#525252; margin-bottom:10px;">🏷️ Oferta Ativa no PWA</div>
+                  <img src="https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=400&q=80" style="width:100%; height:160px; object-fit:cover; border-radius:12px;" alt="Combo Café">
+                  <div style="margin-top:12px;">
+                    <div style="font-size:15px; font-weight:800; color:#111;">Café + Croissant Artesanal</div>
+                    <div style="font-size:12px; color:#ea580c; font-weight:700; margin-top:2px;">⏰ Válido até as 18h hoje</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 2: Prêmios -->
+            <div class="carousel-slide">
+              <div class="slide-text-col">
+                <span class="slide-badge-category">Fidelização Ativa</span>
+                <h3 class="slide-title">Catálogo de recompensas personalizável</h3>
+                <p class="slide-desc">
+                  Defina quais itens o cliente ganha ao acumular pontos. De um café expresso a um desconto de alto valor, o cliente acompanha a barra de progresso dele e resgata com 1 toque no balcão.
+                </p>
+                <ul class="slide-points-list">
+                  <li><span class="check-icon">✓</span> Pontuação justa e configurada pelo lojista</li>
+                  <li><span class="check-icon">✓</span> Resgate seguro com confirmação na tela do atendente</li>
+                  <li><span class="check-icon">✓</span> Histórico de pontos protegido e unificado por CPF</li>
+                </ul>
+              </div>
+              <div class="slide-visual-col">
+                <div class="slide-mockup-frame">
+                  <div style="font-size:12px; font-weight:700; color:#525252; margin-bottom:12px;">🎁 Resgate de Itens</div>
+                  <div class="mock-reward-item">
+                    <div>
+                      <div style="font-size:13px; font-weight:700; color:#111;">Cappuccino Grande</div>
+                      <div style="font-size:11px; color:#ea580c; font-weight:700;">80 pontos</div>
+                    </div>
+                    <span style="background:#fef3c7; color:#92400e; font-size:11px; font-weight:700; padding:4px 8px; border-radius:6px;">Resgatar</span>
+                  </div>
+                  <div class="mock-reward-item">
+                    <div>
+                      <div style="font-size:13px; font-weight:700; color:#111;">Fatia de Torta Holandesa</div>
+                      <div style="font-size:11px; color:#ea580c; font-weight:700;">140 pontos</div>
+                    </div>
+                    <span style="background:#f5f5f4; color:#a8a29e; font-size:11px; font-weight:700; padding:4px 8px; border-radius:6px;">Faltam 40 pts</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 3: Leitor NFC-e -->
+            <div class="carousel-slide">
+              <div class="slide-text-col">
+                <span class="slide-badge-category">Tecnologia Anti-Fraude</span>
+                <h3 class="slide-title">Pontos por QR Code de cupom fiscal</h3>
+                <p class="slide-desc">
+                  Chega de carimbos fáceis de falsificar. O cliente usa a câmera do próprio celular para escanear a nota que recebeu na compra. O sistema confere se a nota pertence à sua loja e credita a pontuação.
+                </p>
+                <ul class="slide-points-list">
+                  <li><span class="check-icon">✓</span> Validação automática com o CNPJ do seu estabelecimento</li>
+                  <li><span class="check-icon">✓</span> Trava rígida: cada nota só pode ser pontuada 1 única vez</li>
+                  <li><span class="check-icon">✓</span> Sem necessidade de leitor físico ou scanner extra no balcão</li>
+                </ul>
+              </div>
+              <div class="slide-visual-col">
+                <div class="slide-mockup-frame">
+                  <div class="mock-ticket-box">
+                    <div style="font-size:24px; margin-bottom:6px;">📷</div>
+                    <div style="font-size:14px; font-weight:800; color:#111;">Câmera do Cliente</div>
+                    <div style="font-size:11px; color:#525252; margin:6px 0 12px;">Enquadre o QR Code do cupom da compra</div>
+                    <div style="background:#ecfdf5; border:1px solid #bbf7d0; color:#065f46; font-size:12px; font-weight:700; padding:8px; border-radius:8px;">
+                      ✓ Cupom verificado (+100 pts)
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 4: Push Notifications -->
+            <div class="carousel-slide">
+              <div class="slide-text-col">
+                <span class="slide-badge-category">Comunicação Direta</span>
+                <h3 class="slide-title">Notificações push na tela de bloqueio</h3>
+                <p class="slide-desc">
+                  O maior diferencial de um app nativo, agora no seu PWA. Dispare novidades e promoções relâmpago que chegam como alerta com imagem na tela de bloqueio do celular de quem já comprou com você.
+                </p>
+                <ul class="slide-points-list">
+                  <li><span class="check-icon">✓</span> Push exclusivo: você não divide audiência com outros comércios</li>
+                  <li><span class="check-icon">✓</span> Envio com foto grande de alta conversão</li>
+                  <li><span class="check-icon">✓</span> Taxa de abertura muito superior a e-mails ou panfletos</li>
+                </ul>
+              </div>
+              <div class="slide-visual-col">
+                <div class="slide-mockup-frame">
+                  <div class="mock-push-box">
+                    <div class="mock-push-header">
+                      <span style="font-size:11px; font-weight:800; color:#111;">🔥 SEU COMÉRCIO</span>
+                      <span style="font-size:10px; color:#a3a3a3;">Agora</span>
+                    </div>
+                    <div style="font-size:13px; font-weight:800; color:#171717;">Festival de Doces neste fim de semana!</div>
+                    <div style="font-size:11px; color:#525252; margin-top:2px;">Venha conferir nossos lançamentos e acumule pontos em dobro.</div>
+                    <img class="mock-push-img" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=400&q=80" alt="Push Preview">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Indicadores de bolinha centralizados -->
+        <div class="carousel-nav-bar">
+          <div class="carousel-dots" id="carouselDots">
+            <span class="dot-indicator active" onclick="irParaSlide(0)"></span>
+            <span class="dot-indicator" onclick="irParaSlide(1)"></span>
+            <span class="dot-indicator" onclick="irParaSlide(2)"></span>
+            <span class="dot-indicator" onclick="irParaSlide(3)"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Para Quem -->
+  <section class="section-wrap" id="para-quem">
+    <span class="section-tag">Para Qualquer Comércio Local</span>
+    <h2 class="section-title">De cafeterias a salões e barbearias</h2>
+    <p class="section-sub">
+      O Bom Freguês se adapta ao que você vende. A cafeteria da esquina, a hamburgueria artesanal ou o estúdio de estética: a experiência do seu cliente é sempre personalizada e moderna.
+    </p>
+
+    <div class="segments-grid">
+      <div class="segment-card">
+        <img class="segment-img" src="https://images.unsplash.com/photo-1559925393-8be0ec4767c8?auto=format&fit=crop&w=700&q=80" alt="Cafeterias">
+        <div class="segment-body">
+          <h3>Cafeterias e Padarias</h3>
+          <p>Troque espressos, fatias de bolo e combos matinais por compras frequentes no balcão.</p>
+        </div>
+      </div>
+
+      <div class="segment-card">
+        <img class="segment-img" src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=700&q=80" alt="Barbearias">
+        <div class="segment-body">
+          <h3>Barbearias e Salões</h3>
+          <p>Premie cortes, hidratações ou produtos a cada visita e mantenha sua cadeira cheia a semana toda.</p>
+        </div>
+      </div>
+
+      <div class="segment-card">
+        <img class="segment-img" src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=700&q=80" alt="Restaurantes">
+        <div class="segment-body">
+          <h3>Hamburguerias e Bistrôs</h3>
+          <p>Incentive os clientes a voltarem nos dias de menor movimento com promoções exclusivas por push.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Como Funciona com Ícones Vetoriais Sofisticados -->
+  <section class="section-wrap" id="como-funciona">
+    <span class="section-tag">Simples Assim</span>
+    <h2 class="section-title">Como funciona</h2>
+
+    <div class="how-it-works-line">
+      <!-- Passo 1: Ícone de Setup / Criação -->
+      <div class="how-step">
+        <div class="step-box-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+          </svg>
+          <span class="step-number">01</span>
+        </div>
+        <h4>Crie seu app</h4>
+        <p>Escolha o nome, defina as cores da sua marca e cadastre seu CNPJ. Em poucos minutos seu PWA está no ar.</p>
+      </div>
+
+      <!-- Passo 2: Ícone de Compartilhar / QR Code -->
+      <div class="how-step">
+        <div class="step-box-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+          </svg>
+          <span class="step-number">02</span>
+        </div>
+        <h4>Coloque o QR Code no balcão</h4>
+        <p>Seus clientes escaneiam e instalam sem precisar baixar nada da Play Store ou App Store.</p>
+      </div>
+
+      <!-- Passo 3: Ícone de Fidelidade / Crescimento -->
+      <div class="how-step">
+        <div class="step-box-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 20V10"></path>
+            <path d="M12 20V4"></path>
+            <path d="M6 20v-6"></path>
+          </svg>
+          <span class="step-number">03</span>
+        </div>
+        <h4>Fidelize e notifique</h4>
+        <p>O cliente pontua lendo a nota fiscal e você dispara avisos de novas ofertas quando quiser pelo painel admin.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ (Perguntas Frequentes) -->
+  <section class="section-wrap" id="faq">
+    <span class="section-tag">Dúvidas Frequentes</span>
+    <h2 class="section-title">Perguntas comuns</h2>
+    <p class="section-sub">Tudo o que você precisa saber sobre como funciona o app no dia a dia do seu comércio.</p>
+
+    <div class="faq-container">
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          O cliente precisa baixar o app pela App Store ou Google Play?
+          <span>+</span>
+        </div>
+        <div class="faq-answer">
+          Não! O Bom Freguês é um PWA (Progressive Web App). O cliente só aponta a câmera para o QR Code do balcão e adiciona o app à tela inicial com apenas um toque, sem ocupar espaço no celular nem exigir senhas de lojas de aplicativo.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Como o leitor de cupom evita fraudes de clientes?
+          <span>+</span>
+        </div>
+        <div class="faq-answer">
+          O leitor possui proteção anti-fraude integrada: o sistema valida se a compra pertence ao seu comércio e impede automaticamente que o mesmo cupom fiscal seja registrado mais de uma vez.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Como funcionam as notificações push?
+          <span>+</span>
+        </div>
+        <div class="faq-answer">
+          Quando o cliente autoriza os avisos no app dele, ele fica inscrito exclusivamente para a sua loja. Pelo seu painel administrativo, ao publicar uma nova promoção, o sistema envia uma notificação na tela de bloqueio com o título, descrição e foto do produto apenas para os seus clientes.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Se o cliente trocar de celular, ele perde os pontos?
+          <span>+</span>
+        </div>
+        <div class="faq-answer">
+          Não. O cliente pode vincular o CPF dele ao saldo com facilidade a qualquer momento. Ao abrir o app em outro aparelho e digitar o mesmo CPF, o saldo anterior é resgatado automaticamente.
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>© 2026 Bom Freguês Tecnologia. Plataforma de Fidelização para Comércios de Bairro.</p>
+  </footer>
+
+  <script>
+    let cores = {
+      cor1: '#121212',
+      cor2: '#fef3c7',
+      cor3: '#ea580c'
+    };
+    let logoB64 = null;
+
+    // FAQ Accordion
+    function toggleFaq(el) {
+      el.parentElement.classList.toggle('active');
+    }
+
+    // Cores: Sincronização Caixa de Seleção / Hexadecimal
+    function atualizarCor(chave, valor) {
+      cores[chave] = valor;
+      document.getElementById(`fill-${chave}`).style.backgroundColor = valor;
+      document.getElementById(`hex-${chave}`).value = valor.toUpperCase();
+    }
+
+    function atualizarHex(chave, valor) {
+      if (!valor.startsWith('#')) valor = '#' + valor;
+      if (/^#[0-9A-Fa-f]{6}$/.test(valor)) {
+        cores[chave] = valor;
+        document.getElementById(`fill-${chave}`).style.backgroundColor = valor;
+        document.getElementById(`pick-${chave}`).value = valor;
+      }
+    }
+
+    // Limpeza de CNPJ
+    function limparCNPJ(input) {
+      input.value = input.value.replace(/\D/g, '').slice(0, 14);
+      validarFormulario();
+    }
+
+    // Slug a partir do nome
+    function gerarSlug(texto) {
+      return texto.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+    }
+
+    // Validação em Tempo Real para Liberar o Botão
+    function validarFormulario() {
+      const nome = document.getElementById('setup-nome').value.trim();
+      const cnpj = document.getElementById('setup-cnpj').value.trim();
+      const senha = document.getElementById('setup-senha').value;
+      const confirma = document.getElementById('setup-confirma-senha').value;
+      const btn = document.getElementById('btn-submit-app');
+
+      const erroCnpj = document.getElementById('erro-cnpj');
+      const erroSenha = document.getElementById('erro-senha');
+
+      let valido = true;
+
+      if (nome.length < 2) {
+        valido = false;
+      }
+
+      if (cnpj.length !== 14) {
+        valido = false;
+        if (cnpj.length > 0) erroCnpj.style.display = 'block';
+        else erroCnpj.style.display = 'none';
+      } else {
+        erroCnpj.style.display = 'none';
+      }
+
+      if (senha.length < 4) {
+        valido = false;
+      }
+
+      if (senha !== confirma) {
+        valido = false;
+        if (confirma.length > 0) erroSenha.style.display = 'block';
+        else erroSenha.style.display = 'none';
+      } else {
+        erroSenha.style.display = 'none';
+      }
+
+      btn.disabled = !valido;
+    }
+
+    // ==========================================
+    // LÓGICA DO CARROSSEL DE RECURSOS
+    // ==========================================
+    let slideAtual = 0;
+    const totalSlides = 4;
+    const track = document.getElementById('carouselTrack');
+    const dots = document.querySelectorAll('.dot-indicator');
+
+    function irParaSlide(index) {
+      slideAtual = index;
+      if (slideAtual < 0) slideAtual = totalSlides - 1;
+      if (slideAtual >= totalSlides) slideAtual = 0;
+
+      track.style.transform = `translateX(-${slideAtual * 100}%)`;
+      dots.forEach((d, i) => d.classList.toggle('active', i === slideAtual));
+    }
+
+    function proximoSlide() {
+      irParaSlide(slideAtual + 1);
+    }
+
+    function slideAnterior() {
+      irParaSlide(slideAtual - 1);
+    }
+
+    // Swipe e Drag no Carrossel
+    const viewport = document.getElementById('carouselViewport');
+    let startX = 0;
+    let isDragging = false;
+
+    viewport.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.pageX;
+    });
+
+    viewport.addEventListener('mouseup', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      const diff = e.pageX - startX;
+      if (diff < -50) proximoSlide();
+      if (diff > 50) slideAnterior();
+    });
+
+    viewport.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+    }, { passive: true });
+
+    viewport.addEventListener('touchend', (e) => {
+      const diff = e.changedTouches[0].clientX - startX;
+      if (diff < -50) proximoSlide();
+      if (diff > 50) slideAnterior();
+    }, { passive: true });
+
+    async function carregarLogo(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        logoB64 = await comprimirImagemParaBase64(file, 600, 0.85);
+      } catch (err) {
+        alert("Erro ao processar logotipo: " + err.message);
+      }
+    }
+
+    // Cadastro
+    async function cadastrarLojaSaaS(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-app');
+      const nome = document.getElementById('setup-nome').value.trim();
+      const slug = gerarSlug(nome);
+      const cnpj = document.getElementById('setup-cnpj').value.trim();
+      const senha = document.getElementById('setup-senha').value;
+      const confirma = document.getElementById('setup-confirma-senha').value;
+
+      if (!slug) {
+        alert("Digite um nome válido para o comércio.");
+        return;
+      }
+
+      if (cnpj.length !== 14) {
+        alert("O CNPJ deve conter exatamente 14 números.");
+        return;
+      }
+
+      if (senha !== confirma) {
+        alert("As senhas digitadas não conferem.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "Configurando seu aplicativo...";
+
+      try {
+        const payload = {
+          nome_fantasia: nome,
+          slug: slug,
+          cnpj: cnpj,
+          senha_admin: senha,
+          cor_primaria: cores.cor1,
+          cor_secundaria: cores.cor2,
+          cor_destaque: cores.cor3,
+          logo_base64: logoB64
+        };
+
+        await Api.cadastrarTenant(payload);
+
+        const basePath = window.location.pathname.replace('cadastro.html', '');
+        const urlCliente = `${window.location.origin}${basePath}index.html?loja=${slug}`;
+        const urlAdmin = `${window.location.origin}${basePath}admin.html?loja=${slug}`;
+
+        document.getElementById('out-link-cliente').href = urlCliente;
+        document.getElementById('out-link-cliente').innerText = urlCliente;
+
+        document.getElementById('out-link-admin').href = urlAdmin;
+        document.getElementById('out-link-admin').innerText = urlAdmin;
+
+        document.getElementById('qr-out-box').innerHTML = "";
+        new QRCode(document.getElementById('qr-out-box'), {
+          text: urlCliente,
+          width: 128,
+          height: 128,
+          colorDark: "#171717",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+
+        document.getElementById('form-box-wrapper').style.display = 'none';
+        document.getElementById('box-sucesso-app').style.display = 'block';
+      } catch (err) {
+        alert("Erro: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Criar meu app de fidelidade →";
+      }
+    }
+  </script>
+</body>
+</html>

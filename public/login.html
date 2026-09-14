@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Entrar — Bom Freguês</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/api.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { min-height: 100vh; display: flex; background: #ffffff; color: #171717; }
+    .split-layout { display: flex; width: 100%; min-height: 100vh; }
+
+    .left-panel {
+      flex: 1; background: #171412; color: #ffffff; padding: 48px 56px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .brand-logo-white { font-family: 'DM Serif Display', Georgia, serif; font-size: 28px; color: #ffffff; text-decoration: none; }
+    .brand-logo-white span { color: #ea580c; }
+    .quote-text { font-family: 'DM Serif Display', Georgia, serif; font-style: italic; font-size: 32px; line-height: 1.28; color: #f5f5f4; margin-bottom: 20px; }
+
+    .right-panel { flex: 1.15; background: #ffffff; display: flex; align-items: center; justify-content: center; padding: 40px 32px; }
+    .auth-box { width: 100%; max-width: 440px; }
+    .auth-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 40px; color: #111827; margin-bottom: 8px; }
+    .auth-sub { font-size: 14px; color: #64748b; margin-bottom: 32px; }
+
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 8px; }
+    .auth-input { width: 100%; padding: 13px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; outline: none; }
+    .auth-input:focus { border-color: #171717; }
+
+    .btn-submit-auth { width: 100%; background: #171412; color: #ffffff; border: none; border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+    .btn-submit-auth:hover { background: #2a2522; }
+
+    .toggle-auth-mode { text-align: center; margin-top: 24px; font-size: 13px; color: #64748b; }
+    .toggle-auth-mode a { color: #171717; font-weight: 700; cursor: pointer; }
+    .msg-box { display: none; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 600; margin-bottom: 16px; text-align: center; }
+
+    @media (max-width: 900px) {
+      .left-panel { display: none; }
+      .right-panel { padding: 40px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="split-layout">
+    <div class="left-panel">
+      <a href="index.html" class="brand-logo-white">Bom Freguês<span>.</span></a>
+      <div>
+        <p class="quote-text">"A melhor forma de transformar clientes em fãs é valorizando quem sempre volta."</p>
+        <p style="color:#a8a29e; font-size:14px;">Criado para comércios que prezam pela proximidade.</p>
+      </div>
+      <div style="font-size:12px; color:#78716c;">© 2026 Bom Freguês</div>
+    </div>
+
+    <div class="right-panel">
+      <div class="auth-box">
+        <h1 class="auth-title" id="auth-title-text">Bem-vindo(a) de volta</h1>
+        <p class="auth-sub" id="auth-sub-text">Entre para gerenciar o programa de fidelidade do seu comércio.</p>
+
+        <div id="auth-msg" class="msg-box"></div>
+
+        <form onsubmit="executarAutenticacao(event)">
+          <div class="form-group">
+            <label>E-mail</label>
+            <input type="email" id="auth-email" class="auth-input" placeholder="seu@email.com" required>
+          </div>
+
+          <div class="form-group">
+            <label>Senha</label>
+            <input type="password" id="auth-password" class="auth-input" placeholder="••••••••" required>
+          </div>
+
+          <button type="submit" class="btn-submit-auth" id="btn-submit-text">Entrar</button>
+        </form>
+
+        <div class="toggle-auth-mode">
+          <span id="label-toggle">Não tem conta?</span>
+          <a onclick="alternarModo()" id="btn-toggle-modo">Cadastre-se</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let modoCadastro = false;
+
+    function alternarModo() {
+      modoCadastro = !modoCadastro;
+      document.getElementById('auth-title-text').innerText = modoCadastro ? "Criar conta de lojista" : "Bem-vindo(a) de volta";
+      document.getElementById('auth-sub-text').innerText = modoCadastro ? "Cadastre-se com seu e-mail para criar e gerenciar seu app." : "Entre para gerenciar o programa de fidelidade do seu comércio.";
+      document.getElementById('btn-submit-text').innerText = modoCadastro ? "Criar Conta" : "Entrar";
+      document.getElementById('label-toggle').innerText = modoCadastro ? "Já tem uma conta?" : "Não tem conta?";
+      document.getElementById('btn-toggle-modo').innerText = modoCadastro ? "Faça Login" : "Cadastre-se";
+    }
+
+    async function executarAutenticacao(e) {
+        e.preventDefault();
+        const email = document.getElementById('auth-email').value.trim();
+        const password = document.getElementById('auth-password').value;
+        const msg = document.getElementById('auth-msg');
+        const btn = document.getElementById('btn-submit-text');
+
+        btn.disabled = true;
+        btn.innerText = "Aguarde...";
+        msg.style.display = "none";
+
+        try {
+            let userId = null;
+
+            if (modoCadastro) {
+            const res = await Api.cadastrarUsuario(email, password);
+            userId = res.user?.id;
+            
+            if (!userId && res.session?.user?.id) {
+                userId = res.session.user.id;
+            }
+
+            // Se o Supabase exigir confirmação de e-mail e não retornar sessão imediata
+            if (!userId && res.user && !res.session) {
+                msg.style.display = "block";
+                msg.style.background = "#dcfce7";
+                msg.style.color = "#166534";
+                msg.innerText = "Conta criada com sucesso! Verifique seu e-mail para confirmar ou faça login.";
+                alternarModo();
+                return;
+            }
+            } else {
+            const res = await Api.loginUsuario(email, password);
+            userId = res.user?.id;
+            }
+
+            if (!userId) {
+            throw new Error("Não foi possível identificar o usuário. Tente fazer login.");
+            }
+
+            sessionStorage.setItem('saas_auth_user_id', userId);
+
+            // Tenta ver se já tem loja; se falhar ou for novo, leva pro setup
+            try {
+            const loja = await Api.getTenantPorUsuario(userId);
+            if (loja && loja.slug) {
+                window.location.href = `admin.html?loja=${loja.slug}`;
+                return;
+            }
+            } catch (lojaErr) {
+            console.warn("Loja não encontrada, indo para criação:", lojaErr);
+            }
+
+            // Usuário novo sem loja: vai direto para o admin configurar a primeira loja
+            window.location.href = `admin.html`;
+
+        } catch (err) {
+            msg.style.display = "block";
+            msg.style.background = "#fee2e2";
+            msg.style.color = "#991b1b";
+            msg.innerText = "❌ " + (err.message || "Falha na autenticação");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = modoCadastro ? "Criar Conta" : "Entrar";
+        }
+    }
+    </script>
+</body>
+</html>

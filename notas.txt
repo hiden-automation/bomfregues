@@ -1,0 +1,2 @@
+OneSignal App ID 9532faa1-a714-4408-a440-0b68ec889062
+Rest API Key os_v2_app_suzpvinhcrcarjcabnuozceqmlkr43gzfpautfu4al2upujd66i7wuirscmxf6yq4vnhbtjibrl5bkwq24jyorrkekprqlbymci5vty

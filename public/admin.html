@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Painel do Estabelecimento — Bom Freguês</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script src="js/api.js"></script>
+  <script src="js/theme.js"></script>
+
+  <style>
+    :root {
+      --bg: #fafaf9;
+      --surface: #ffffff;
+      --text: #1c1917;
+      --muted: #78716c;
+      --border: #e7e5e4;
+      --dark-btn: #1c1917;
+      --accent: #ea580c;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+
+    .brand-logo {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 26px;
+      color: #111;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-dot {
+      color: #ea580c;
+    }
+
+    .top-nav {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #1c1917;
+      letter-spacing: -0.3px;
+    }
+
+    .store-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: #78716c;
+      background: #f5f5f4;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn-link-pwa {
+      font-size: 12px;
+      font-weight: 700;
+      color: #ea580c;
+      background: #fff7ed;
+      border: 1px solid #ffedd5;
+      padding: 8px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: none;
+    }
+
+    .btn-logout {
+      background: none;
+      border: 1px solid var(--border);
+      color: #dc2626;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .tabs-bar {
+      max-width: 1200px;
+      width: 100%;
+      margin: 24px auto 0;
+      padding: 0 24px;
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab-trigger {
+      background: transparent;
+      border: none;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      padding: 12px 18px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.15s ease;
+    }
+
+    .tab-trigger:hover { color: var(--text); }
+    .tab-trigger.active { color: #1c1917; border-bottom-color: #1c1917; }
+
+    .content-area {
+      max-width: 1200px;
+      width: 100%;
+      margin: 28px auto 60px;
+      padding: 0 24px;
+      flex: 1;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 22px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #44403c;
+    }
+
+    .input-control {
+      width: 100%;
+      padding: 12px 14px;
+      background: #fafaf9;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+      transition: all 0.15s;
+    }
+
+    .input-control:focus {
+      background: #ffffff;
+      border-color: #1c1917;
+    }
+
+    .color-picker-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .color-item {
+      border: 1px solid var(--border);
+      background: #fafaf9;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .color-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 3px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      position: relative;
+      cursor: pointer;
+    }
+
+    .color-input-hidden {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .color-hex {
+      width: 76px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-align: center;
+      border: 1px solid #d6d3d1;
+      border-radius: 6px;
+      padding: 4px;
+      background: #fff;
+    }
+
+    /* Container de Logo com Exibição Atual */
+    .logo-container-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 14px;
+      background: #fafaf9;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .logo-current-thumb {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: transparent;
+    }
+
+    .logo-current-thumb img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .btn-submit {
+      background: var(--dark-btn);
+      color: #ffffff;
+      border: none;
+      padding: 13px 22px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-submit:disabled {
+      background: #d6d3d1;
+      cursor: not-allowed;
+    }
+
+    .mockup-sticky {
+      position: sticky;
+      top: 96px;
+    }
+
+    .phone-frame {
+      max-width: 340px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 8px solid #1c1917;
+      border-radius: 36px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.12);
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header no Mockup: Cor plana pura, sem gradientes ou sombras escuras */
+    .mockup-header {
+      padding: 24px 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      background-color: #800000;
+      color: #ffffff;
+    }
+
+    .mockup-logo-free {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+
+    .mockup-logo-free img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .mockup-titles div:first-child { 
+      font-size: 15px; 
+      font-weight: 800; 
+      line-height: 1.2;
+      color: inherit;
+    }
+
+    .mockup-titles div:last-child { 
+      font-size: 11px; 
+      margin-top: 2px;
+      color: inherit;
+      opacity: 0.85;
+    }
+
+    .mockup-body {
+      padding: 16px;
+      background: #fafaf9;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mockup-card-balance {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .mockup-balance-number {
+      font-size: 28px;
+      font-weight: 800;
+      color: #1c1917;
+    }
+
+    .share-row {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .qr-box {
+      padding: 12px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .share-info {
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .pwa-url-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      word-break: break-all;
+      margin: 6px 0 12px;
+    }
+
+    .crud-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .crud-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: #fafaf9;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .crud-card-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .crud-card-img {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #e7e5e4;
+    }
+
+    .btn-delete {
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      color: #dc2626;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      .editor-grid { grid-template-columns: 1fr; }
+      .mockup-sticky { display: none; }
+      .top-nav { padding: 0 16px; }
+      .content-area { padding: 0 16px; }
+      .tabs-bar { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="brand-group">
+      <a href="#" class="brand-logo">
+        Bom Freguês<span class="brand-dot">.</span>
+      </a>
+      <span class="store-badge" id="top-slug-badge">Painel Admin</span>
+    </div>
+
+    <div class="nav-actions">
+      <a href="#" target="_blank" class="btn-link-pwa" id="link-abrir-pwa">Abrir App do Cliente ↗</a>
+      <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+    </div>
+  </header>
+
+  <nav class="tabs-bar">
+    <button class="tab-trigger active" onclick="alternarAba('tab-identidade', this)">Identidade & Marca</button>
+    <button class="tab-trigger" onclick="alternarAba('tab-promocoes', this)">Promoções & Push</button>
+    <button class="tab-trigger" onclick="alternarAba('tab-fidelidade', this)">Catálogo de Prêmios</button>
+  </nav>
+
+  <main class="content-area">
+    <!-- ABA 1: IDENTIDADE -->
+    <section id="tab-identidade" class="tab-panel active">
+      <div class="card" id="card-qrcode-divulgacao" style="display:none;">
+        <div class="card-title">QR Code de Balcão</div>
+        <div class="card-subtitle">Disponibilize para os clientes escanearem e abrirem o app no celular.</div>
+        <div class="share-row">
+          <div class="qr-box"><div id="qrcode-render"></div></div>
+          <div class="share-info">
+            <span style="font-size:12px; font-weight:700; color:var(--muted);">Link direto do aplicativo:</span>
+            <div class="pwa-url-label" id="pwa-url-text">---</div>
+            <button type="button" class="btn-submit" style="background:#f5f5f4; color:#1c1917; border:1px solid #d6d3d1; padding:9px 16px;" onclick="copiarLinkPwa()">
+              Copiar Link
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="editor-grid">
+        <div class="card">
+          <div class="card-title">Configurações da Marca</div>
+          <div class="card-subtitle">Altere o nome fantasia, CNPJ, paleta de cores e logotipo.</div>
+
+          <form onsubmit="salvarIdentidade(event)">
+            <div class="form-group">
+              <label class="form-label">Nome Fantasia do Estabelecimento *</label>
+              <input type="text" id="loja-nome" class="input-control" placeholder="Ex: Singelo Brigadeiro" required oninput="atualizarMockupNome(this.value)">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">CNPJ da Nota Fiscal (14 números) *</label>
+              <input type="text" id="loja-cnpj" class="input-control" placeholder="00000000000000" maxlength="14" required oninput="this.value=this.value.replace(/\D/g,'').slice(0,14)">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Paleta de Cores</label>
+              <div class="color-picker-grid">
+                <div class="color-item">
+                  <div class="color-circle" id="circ-header" style="background:#800000;">
+                    <input type="color" id="picker-header" class="color-input-hidden" value="#800000" oninput="sincronizarCor('header', this.value)">
+                  </div>
+                  <span style="font-size:11px; font-weight:700;">Header</span>
+                  <input type="text" id="hex-header" class="color-hex" value="#800000" maxlength="7" oninput="sincronizarHex('header', this.value)">
+                </div>
+
+                <div class="color-item">
+                  <div class="color-circle" id="circ-sec" style="background:#ffffff;">
+                    <input type="color" id="picker-sec" class="color-input-hidden" value="#ffffff" oninput="sincronizarCor('sec', this.value)">
+                  </div>
+                  <span style="font-size:11px; font-weight:700;">Tag</span>
+                  <input type="text" id="hex-sec" class="color-hex" value="#FFFFFF" maxlength="7" oninput="sincronizarHex('sec', this.value)">
+                </div>
+
+                <div class="color-item">
+                  <div class="color-circle" id="circ-dest" style="background:#b91c1c;">
+                    <input type="color" id="picker-dest" class="color-input-hidden" value="#b91c1c" oninput="sincronizarCor('dest', this.value)">
+                  </div>
+                  <span style="font-size:11px; font-weight:700;">Botão</span>
+                  <input type="text" id="hex-dest" class="color-hex" value="#B91C1C" maxlength="7" oninput="sincronizarHex('dest', this.value)">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Logotipo (PNG, JPG ou WEBP)</label>
+              <div class="logo-container-row">
+                <div class="logo-current-thumb" id="thumb-logo-box">
+                  <span style="font-size:24px;">🏪</span>
+                </div>
+                <div style="flex:1;">
+                  <input type="file" id="loja-logo" accept="image/*" class="input-control" onchange="processarLogo(event)">
+                  <span style="font-size:11px; color:var(--muted); display:block; margin-top:4px;" id="logo-status-label">
+                    Logo atual mantida. Selecione um novo arquivo se desejar substituir.
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-save-loja" style="width:100%; margin-top:10px;">
+              Salvar Alterações
+            </button>
+          </form>
+        </div>
+
+        <!-- Live Preview Interativo -->
+        <div class="mockup-sticky">
+          <div style="font-size:12px; font-weight:700; color:var(--muted); text-align:center; margin-bottom:8px;">
+            Prévia em Tempo Real do PWA
+          </div>
+
+          <div class="phone-frame">
+            <div class="mockup-header" id="mock-header" style="background-color: #800000;">
+              <div class="mockup-logo-free" id="mock-logo-wrap"></div>
+              <div class="mockup-titles">
+                <div id="mock-store-name">Singelo Brigadeiro</div>
+                <div id="mock-store-sub">Clube de Vantagens & Ofertas</div>
+              </div>
+            </div>
+
+            <div class="mockup-body">
+              <div class="mockup-card-balance">
+                <div style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase;">Saldo Disponível</div>
+                <div class="mockup-balance-number">100 <span style="font-size:14px; color:#b91c1c;" id="mock-pts-label">pts</span></div>
+                <button type="button" class="btn-submit" id="mock-btn-action" style="width:100%; background:#b91c1c; font-size:12px; padding:10px; margin-top:10px;">
+                  Escanear QR Code da Nota
+                </button>
+              </div>
+
+              <div style="background:#fff; border:1px solid var(--border); border-radius:12px; padding:12px; font-size:12px;">
+                <span id="mock-tag" style="background:#ffffff; color:#b91c1c; padding:3px 6px; border-radius:4px; font-weight:800; font-size:10px; border:1px solid rgba(0,0,0,0.06);">OFERTA DA LOJA</span>
+                <div style="font-weight:700; margin-top:6px;">Combo Especial da Semana</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 2: PROMOÇÕES -->
+    <section id="tab-promocoes" class="tab-panel">
+      <div class="card">
+        <div class="card-title">Nova Promoção</div>
+        <div class="card-subtitle">Publica a oferta e dispara aviso para os clientes inscritos.</div>
+
+        <form onsubmit="criarPromocao(event)">
+          <div class="form-group">
+            <label class="form-label">Título da Oferta *</label>
+            <input type="text" id="promo-titulo" class="input-control" placeholder="Ex: Caixa com 6 Brigadeiros por R$ 25" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Descrição da Oferta *</label>
+            <input type="text" id="promo-desc" class="input-control" placeholder="Ex: Válido até o fim de semana para consumo no local" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Validade *</label>
+            <input type="text" id="promo-validade" class="input-control" placeholder="Ex: Válido até 30/11" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Foto da Oferta</label>
+            <input type="file" id="promo-foto" accept="image/*" class="input-control" onchange="processarFotoPromo(event)">
+          </div>
+
+          <button type="submit" class="btn-submit" id="btn-post-promo">Publicar Promoção</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Promoções Ativas no Ar</div>
+        <div id="lista-promocoes-box" class="crud-list">Carregando promoções...</div>
+      </div>
+    </section>
+
+    <!-- ABA 3: FIDELIDADE -->
+    <section id="tab-fidelidade" class="tab-panel">
+      <div class="card">
+        <div class="card-title">Novo Item de Recompensa</div>
+        <div class="card-subtitle">Cadastre os prêmios que os clientes podem trocar por pontos.</div>
+
+        <form onsubmit="criarPremio(event)">
+          <div class="form-group">
+            <label class="form-label">Título da Recompensa *</label>
+            <input type="text" id="premio-titulo" class="input-control" placeholder="Ex: Brigadeiro Tradicional Grátis" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Pontos Necessários *</label>
+            <input type="number" id="premio-pontos" class="input-control" placeholder="Ex: 60" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Foto do Item</label>
+            <input type="file" id="premio-foto" accept="image/*" class="input-control" onchange="processarFotoPremio(event)">
+          </div>
+
+          <button type="submit" class="btn-submit" id="btn-post-premio">Adicionar Recompensa</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Catálogo de Recompensas</div>
+        <div id="lista-premios-box" class="crud-list">Carregando catálogo...</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let lojaAtual = null;
+    let userIdAtual = null;
+    let pwaClienteUrl = "";
+
+    let corHeader = '#800000';
+    let corSec = '#ffffff';
+    let corDest = '#b91c1c';
+
+    let logoB64 = null;
+    let promoB64 = null;
+    let premioB64 = null;
+
+    (async function init() {
+      const session = await Api.obterSessao();
+      userIdAtual = session?.user?.id || sessionStorage.getItem('saas_auth_user_id');
+
+      if (!userIdAtual) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        lojaAtual = await Api.getTenantPorUsuario(userIdAtual);
+      } catch (e) {
+        console.warn(e);
+      }
+
+      if (lojaAtual && lojaAtual.slug) {
+        carregarLojaExistente(lojaAtual);
+      } else {
+        carregarModoCriacao();
+      }
+    })();
+
+    function alternarAba(tabId, trigger) {
+      document.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      trigger.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    function carregarLojaExistente(loja) {
+      document.getElementById('top-slug-badge').innerText = `@${loja.slug}`;
+      document.getElementById('loja-nome').value = loja.nome_fantasia || '';
+      document.getElementById('loja-cnpj').value = loja.cnpj || '';
+
+      sincronizarCor('header', loja.cor_primaria || '#800000');
+      sincronizarCor('sec', loja.cor_secundaria || '#ffffff');
+      sincronizarCor('dest', loja.cor_destaque || '#b91c1c');
+
+      if (loja.logo_url) {
+        document.getElementById('mock-logo-wrap').innerHTML = `<img src="${loja.logo_url}" alt="Logo">`;
+        document.getElementById('thumb-logo-box').innerHTML = `<img src="${loja.logo_url}" alt="Logo Salvo">`;
+        document.getElementById('logo-status-label').innerText = "Logotipo cadastrado. Envie outro arquivo apenas se desejar trocar.";
+      }
+      atualizarMockupNome(loja.nome_fantasia);
+
+      pwaClienteUrl = `${window.location.origin}${window.location.pathname.replace('admin.html', 'app.html')}?loja=${loja.slug}`;
+      document.getElementById('link-abrir-pwa').href = pwaClienteUrl;
+      document.getElementById('link-abrir-pwa').style.display = 'inline-flex';
+      document.getElementById('pwa-url-text').innerText = pwaClienteUrl;
+      document.getElementById('card-qrcode-divulgacao').style.display = 'block';
+
+      document.getElementById('qrcode-render').innerHTML = "";
+      new QRCode(document.getElementById('qrcode-render'), {
+        text: pwaClienteUrl,
+        width: 120,
+        height: 120,
+        colorDark: "#1c1917",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      carregarPromocoes();
+      carregarPremios();
+    }
+
+    function carregarModoCriacao() {
+      document.getElementById('top-slug-badge').innerText = "Novo Estabelecimento";
+      document.getElementById('btn-save-loja').innerText = "Criar e Publicar App";
+      document.getElementById('card-qrcode-divulgacao').style.display = 'none';
+      document.getElementById('link-abrir-pwa').style.display = 'none';
+    }
+
+    function atualizarMockupNome(val) {
+      document.getElementById('mock-store-name').innerText = val.trim() || 'Seu Estabelecimento';
+    }
+
+    function sincronizarCor(tipo, val) {
+      if (tipo === 'header') {
+        corHeader = val;
+        const mockHeader = document.getElementById('mock-header');
+        mockHeader.style.backgroundColor = val;
+        
+        const corTexto = calcularCorTextoContraste(val);
+        mockHeader.style.color = corTexto;
+        mockHeader.style.borderBottom = corTexto === '#0f172a' ? '1px solid #e7e5e4' : 'none';
+        
+        const subTexto = corTexto === '#0f172a' ? '#57534e' : 'rgba(255,255,255,0.85)';
+        document.getElementById('mock-store-sub').style.color = subTexto;
+      }
+      if (tipo === 'sec') {
+        corSec = val;
+        document.getElementById('mock-tag').style.background = val;
+      }
+      if (tipo === 'dest') {
+        corDest = val;
+        document.getElementById('mock-btn-action').style.background = val;
+        document.getElementById('mock-pts-label').style.color = val;
+        document.getElementById('mock-tag').style.color = val;
+      }
+
+      document.getElementById(`circ-${tipo}`).style.backgroundColor = val;
+      document.getElementById(`hex-${tipo}`).value = val.toUpperCase();
+      document.getElementById(`picker-${tipo}`).value = val;
+    }
+
+    function sincronizarHex(tipo, val) {
+      if (!val.startsWith('#')) val = '#' + val;
+      if (/^#[0-9A-Fa-f]{6}$/.test(val)) sincronizarCor(tipo, val);
+    }
+
+    async function processarLogo(e) {
+      const file = e.target.files[0];
+      if (file) {
+        logoB64 = await comprimirImagemParaBase64(file, 600, 0.85);
+        document.getElementById('mock-logo-wrap').innerHTML = `<img src="${logoB64}">`;
+        document.getElementById('thumb-logo-box').innerHTML = `<img src="${logoB64}">`;
+        document.getElementById('logo-status-label').innerText = "Novo arquivo pronto para salvar.";
+      }
+    }
+
+    function copiarLinkPwa() {
+      navigator.clipboard.writeText(pwaClienteUrl)
+        .then(() => alert("Link copiado com sucesso!"))
+        .catch(() => prompt("Copie o link:", pwaClienteUrl));
+    }
+
+    // Salva direto no Supabase sem erros de fetch
+    async function salvarIdentidade(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-save-loja');
+      const nome = document.getElementById('loja-nome').value.trim();
+      const cnpj = document.getElementById('loja-cnpj').value.replace(/\D/g, '');
+
+      if (!nome) return alert("Digite o nome da loja.");
+      if (cnpj.length !== 14) return alert("O CNPJ deve conter exatamente 14 dígitos.");
+
+      btn.disabled = true;
+      btn.innerText = "Salvando alterações...";
+
+      try {
+        let logoFinalUrl = lojaAtual?.logo_url || '';
+
+        // Se uma nova imagem foi carregada, salva no storage
+        if (logoB64 && logoB64.startsWith('data:image')) {
+          const base64Data = logoB64.replace(/^data:image\/\w+;base64,/, '');
+          const bytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+          const fileName = `logos/${lojaAtual?.slug || 'loja'}_${Date.now()}.png`;
+
+          const { error: upErr } = await supabaseClient.storage.from('public-uploads').upload(fileName, bytes, { contentType: 'image/png', upsert: true });
+          if (!upErr) {
+            const { data: pubData } = supabaseClient.storage.from('public-uploads').getPublicUrl(fileName);
+            logoFinalUrl = pubData.publicUrl;
+          }
+        }
+
+        if (!lojaAtual || !lojaAtual.id) {
+          // Criação inicial
+          const slugCalculado = nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-");
+
+          const { data: novo, error: insErr } = await supabaseClient.from('comercios').insert([{
+            nome_fantasia: nome,
+            slug: slugCalculado,
+            cnpj,
+            cor_primaria: corHeader,
+            cor_secundaria: corSec,
+            cor_destaque: corDest,
+            logo_url: logoFinalUrl,
+            icone_pwa_url: logoFinalUrl,
+            user_id: userIdAtual
+          }]).select().single();
+
+          if (insErr) throw insErr;
+          lojaAtual = novo;
+          alert("Aplicativo criado com sucesso!");
+          window.location.reload();
+        } else {
+          // Atualização da mesma loja mantendo slug e histórico de clientes
+          const { data: atualizado, error: updErr } = await supabaseClient
+            .from('comercios')
+            .update({
+              nome_fantasia: nome,
+              cnpj,
+              cor_primaria: corHeader,
+              cor_secundaria: corSec,
+              cor_destaque: corDest,
+              logo_url: logoFinalUrl,
+              icone_pwa_url: logoFinalUrl
+            })
+            .eq('id', lojaAtual.id)
+            .select()
+            .single();
+
+          if (updErr) throw updErr;
+          lojaAtual = atualizado;
+          alert("Alterações salvas com sucesso!");
+          window.location.reload();
+        }
+      } catch (err) {
+        alert("Erro ao salvar: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Salvar Alterações";
+      }
+    }
+
+    async function processarFotoPromo(e) {
+      const f = e.target.files[0];
+      if (f) promoB64 = await comprimirImagemParaBase64(f, 800, 0.80);
+    }
+
+    async function carregarPromocoes() {
+      const box = document.getElementById('lista-promocoes-box');
+      try {
+        const itens = await Api.listarPromocoes(lojaAtual.slug);
+        if (!itens.length) {
+          box.innerHTML = `<p style="font-size:13px; color:var(--muted); padding:8px 0;">Nenhuma promoção cadastrada.</p>`;
+          return;
+        }
+        box.innerHTML = itens.map(p => `
+          <div class="crud-card" id="promo-${p.id}">
+            <div class="crud-card-left">
+              <img class="crud-card-img" src="${p.imagem_url || 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=150&q=80'}">
+              <div>
+                <strong style="font-size:13px;">${p.titulo}</strong>
+                <div style="font-size:11px; color:var(--muted);">${p.validade} • ${p.descricao}</div>
+              </div>
+            </div>
+            <button class="btn-delete" onclick="deletarPromo(${p.id})">Excluir</button>
+          </div>
+        `).join('');
+      } catch (e) {
+        box.innerHTML = `<p style="color:#ef4444; font-size:12px;">${e.message}</p>`;
+      }
+    }
+
+    async function criarPromocao(e) {
+      e.preventDefault();
+      if (!lojaAtual) return alert("Crie sua loja antes de postar promoções.");
+      const btn = document.getElementById('btn-post-promo');
+      btn.disabled = true;
+
+      try {
+        await Api.criarPromocao({
+          slug: lojaAtual.slug,
+          senha: 'auth_managed',
+          titulo: document.getElementById('promo-titulo').value.trim(),
+          descricao: document.getElementById('promo-desc').value.trim(),
+          validade: document.getElementById('promo-validade').value.trim(),
+          imagem_base64: promoB64,
+          app_url: pwaClienteUrl
+        });
+
+        alert("Promoção publicada com sucesso!");
+        document.getElementById('promo-titulo').value = '';
+        document.getElementById('promo-desc').value = '';
+        document.getElementById('promo-validade').value = '';
+        promoB64 = null;
+        await carregarPromocoes();
+      } catch (err) {
+        alert("Erro: " + err.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function deletarPromo(id) {
+      if (!confirm("Deseja excluir esta promoção?")) return;
+      try {
+        await Api.deletarPromocao(lojaAtual.slug, 'auth_managed', id);
+        document.getElementById(`promo-${id}`)?.remove();
+      } catch (e) {
+        alert("Erro: " + e.message);
+      }
+    }
+
+    async function processarFotoPremio(e) {
+      const f = e.target.files[0];
+      if (f) premioB64 = await comprimirImagemParaBase64(f, 600, 0.80);
+    }
+
+    async function carregarPremios() {
+      const box = document.getElementById('lista-premios-box');
+      try {
+        const itens = await Api.listarPremios(lojaAtual.slug);
+        if (!itens.length) {
+          box.innerHTML = `<p style="font-size:13px; color:var(--muted); padding:8px 0;">Nenhum prêmio cadastrado.</p>`;
+          return;
+        }
+        box.innerHTML = itens.map(p => `
+          <div class="crud-card" id="premio-${p.id}">
+            <div class="crud-card-left">
+              <img class="crud-card-img" src="${p.imagem_url || 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=150&q=80'}">
+              <div>
+                <strong style="font-size:13px;">${p.titulo}</strong>
+                <div style="font-size:11px; color:#b91c1c; font-weight:700;">${p.pontos} Pontos necessários</div>
+              </div>
+            </div>
+            <button class="btn-delete" onclick="deletarPremio(${p.id})">Excluir</button>
+          </div>
+        `).join('');
+      } catch (e) {
+        box.innerHTML = `<p style="color:#ef4444; font-size:12px;">${e.message}</p>`;
+      }
+    }
+
+    async function criarPremio(e) {
+      e.preventDefault();
+      if (!lojaAtual) return alert("Crie sua loja antes de adicionar recompensas.");
+      const btn = document.getElementById('btn-post-premio');
+      btn.disabled = true;
+
+      try {
+        await Api.criarPremio({
+          slug: lojaAtual.slug,
+          senha: 'auth_managed',
+          titulo: document.getElementById('premio-titulo').value.trim(),
+          pontos: parseInt(document.getElementById('premio-pontos').value),
+          imagem_base64: premioB64
+        });
+
+        alert("Recompensa cadastrada!");
+        document.getElementById('premio-titulo').value = '';
+        document.getElementById('premio-pontos').value = '';
+        premioB64 = null;
+        await carregarPremios();
+      } catch (err) {
+        alert("Erro: " + err.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function deletarPremio(id) {
+      if (!confirm("Deseja excluir este item do catálogo?")) return;
+      try {
+        await Api.deletarPremio(lojaAtual.slug, 'auth_managed', id);
+        document.getElementById(`premio-${id}`)?.remove();
+      } catch (e) {
+        alert("Erro: " + e.message);
+      }
+    }
+
+    async function fazerLogout() {
+      sessionStorage.clear();
+      await Api.logout();
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>
