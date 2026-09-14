@@ -42,14 +42,14 @@
       background-color: var(--cor-fundo) !important;
       color: var(--cor-texto);
       min-height: 100vh;
-      padding-bottom: 90px !important;
+      padding-bottom: 96px !important;
       margin: 0 !important;
     }
 
     .tab-view { display: none; }
     .tab-view.active { display: block; }
 
-    /* Header com Logo Livre e Posição Relativa para a Flutuação */
+    /* Header Elegante e Limpo */
     .top-header {
       background: var(--cor-primaria) !important;
       padding: 24px 20px 32px 20px !important;
@@ -58,9 +58,8 @@
       align-items: center;
       border-bottom: var(--borda-header) !important;
       box-shadow: none !important;
-      position: relative !important;
-      z-index: 50 !important;
-      margin-bottom: 0 !important;
+      position: relative;
+      z-index: 10;
     }
 
     .clean-logo-wrap {
@@ -95,23 +94,23 @@
       margin-top: 3px; 
     }
 
-    /* Floating Layer: Agora ancorado de verdade na borda inferior do header */
-    .floating-layer-anchor {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translate(-50%, 50%);
-      width: calc(100% - 32px);
-      max-width: 448px;
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      pointer-events: none;
+    /* Container Principal */
+    .container-app-shield {
+      max-width: 480px !important;
+      margin: 0 auto !important;
+      padding: 0 16px !important;
+      position: relative;
     }
 
-    .floating-layer-anchor > * {
-      pointer-events: auto;
+    /* Área Flutuante sem sobreposição quebrada: desce suavemente na junção */
+    .floating-stack-area {
+      margin-top: -18px;
+      margin-bottom: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      z-index: 30;
     }
 
     /* Botão Flutuante de Push */
@@ -120,20 +119,22 @@
       color: var(--cor-destaque);
       border: 1.5px solid var(--cor-borda);
       border-radius: 9999px;
-      padding: 12px 20px;
+      padding: 13px 20px;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       display: none;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      gap: 8px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
       width: 100%;
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, background-color 0.15s ease;
     }
 
     .btn-push-floating:active {
       transform: scale(0.98);
+      background: #fdf2f2;
     }
 
     /* Banner Flutuante de CPF */
@@ -142,7 +143,7 @@
       border: 1.5px solid var(--cor-borda);
       border-radius: 18px;
       padding: 14px 18px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
       display: none;
       flex-direction: column;
       gap: 4px;
@@ -166,22 +167,12 @@
       text-decoration: underline;
     }
 
-    /* Container Principal blindado contra estilos do global.css */
-    .container-app-shield {
-      max-width: 480px !important;
-      margin: 0 auto !important;
-      padding: 40px 16px 0 16px !important; /* Respiro fixo e garantido */
-      position: relative !important;
-      clear: both !important;
-    }
-
-    /* Headline com respiro próprio garantido */
+    /* Títulos de Seção com Espaço Saudável */
     .headline-bar-fixed {
       font-size: 18px !important;
       font-weight: 800 !important;
       color: var(--cor-texto) !important;
-      margin-top: 0 !important;
-      margin-bottom: 18px !important;
+      margin: 18px 4px 14px 4px !important;
       display: block !important;
       letter-spacing: -0.4px;
     }
@@ -312,7 +303,7 @@
       cursor: pointer;
     }
 
-    /* Modal iOS */
+    /* Modal Tutorial iOS */
     .ios-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
     .ios-sheet {
       position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff;
@@ -329,7 +320,11 @@
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function(OneSignal) {
-      await OneSignal.init({ appId: "3848f19b-f5ef-45a5-a307-ad0a89725eb1", welcomeNotification: { disable: true } });
+      await OneSignal.init({
+        appId: "3848f19b-f5ef-45a5-a307-ad0a89725eb1",
+        welcomeNotification: { disable: true },
+        notifyButton: { enable: false }
+      });
       await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
       checarStatusPush();
       OneSignal.User.PushSubscription.addEventListener("change", checarStatusPush);
@@ -338,46 +333,51 @@
     function checarStatusPush() {
       const btn = document.getElementById('btn-push-action');
       if (!btn) return;
-      
+
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
       const inscrito = window.OneSignal?.User?.PushSubscription?.optedIn ?? false;
       const permitido = ("Notification" in window) && Notification.permission === "granted";
-      
+
+      // Aparece caso esteja no app instalado e ainda não tenha ativado
       if (isStandalone && (!inscrito || !permitido)) {
         btn.style.display = 'inline-flex';
-        ajustarEspacoContainer();
       } else {
         btn.style.display = 'none';
-        ajustarEspacoContainer();
-      }
-    }
-
-    function ajustarEspacoContainer() {
-      const btnPush = document.getElementById('btn-push-action');
-      const alertaCpf = document.getElementById('alerta-vincular');
-      const container = document.getElementById('container-app');
-      
-      const pushAtivo = btnPush && btnPush.style.display !== 'none';
-      const cpfAtivo = alertaCpf && alertaCpf.style.display !== 'none';
-
-      // Se houver algum card flutuando exatamente na divisa, dá mais espaço para não cobrir o título
-      if (pushAtivo || cpfAtivo) {
-        container.style.setProperty('padding-top', '54px', 'important');
-      } else {
-        container.style.setProperty('padding-top', '36px', 'important');
       }
     }
 
     async function ativarPush() {
-      window.OneSignalDeferred.push(async function(OneSignal) {
-        try {
-          await OneSignal.Notifications.requestPermission();
-          await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
-          await OneSignal.User.PushSubscription.optIn();
-          alert("Notificações ativadas com sucesso!");
-          checarStatusPush();
-        } catch (e) { alert("Erro: " + e.message); }
-      });
+      const btn = document.getElementById('btn-push-action');
+      if (btn) btn.innerText = "Ativando...";
+
+      try {
+        // 1. Solicitação no navegador
+        if ("Notification" in window) {
+          const perm = await Notification.requestPermission();
+          if (perm === "denied") {
+            alert("As notificações estão bloqueadas nas configurações do seu navegador. Toque no ícone de cadeado ou configurações do site para permitir.");
+            if (btn) btn.innerText = "Receber avisos de promoções";
+            return;
+          }
+        }
+
+        // 2. Aciona o OneSignal
+        window.OneSignalDeferred.push(async function(OneSignal) {
+          try {
+            await OneSignal.Notifications.requestPermission();
+            await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
+            await OneSignal.User.PushSubscription.optIn();
+            alert("✅ Notificações ativadas com sucesso!");
+            checarStatusPush();
+          } catch (e) {
+            console.warn("OneSignal optIn info:", e);
+            checarStatusPush();
+          }
+        });
+      } catch (err) {
+        alert("Não foi possível ativar as notificações: " + err.message);
+        if (btn) btn.innerText = "Receber avisos de promoções";
+      }
     }
   </script>
 </head>
@@ -392,9 +392,11 @@
       <div class="header-title-clean dinamico-nome">Carregando...</div>
       <div class="header-sub-clean">Clube de Vantagens & Ofertas</div>
     </div>
+  </header>
 
-    <!-- Ancoragem Flutuante na Borda Inferior do Header -->
-    <div class="floating-layer-anchor">
+  <div class="container-app-shield">
+    <!-- Camada Flutuante em fluxo limpo: fica sobreposta no rodapé do header sem cobrir logo ou texto -->
+    <div class="floating-stack-area">
       <button id="btn-push-action" class="btn-push-floating" onclick="ativarPush()">
         Receber avisos de promoções
       </button>
@@ -406,10 +408,7 @@
         <button class="cpf-floating-action" onclick="vincularCpfModal()">Vincular meu CPF agora</button>
       </div>
     </div>
-  </header>
 
-  <!-- Container Isolado e com Margens Blindadas -->
-  <div class="container-app-shield" id="container-app">
     <!-- ABA 1: Ofertas -->
     <div id="view-promos" class="tab-view active">
       <h2 class="headline-bar-fixed">Ofertas da Loja</h2>
@@ -476,7 +475,6 @@
       } else {
         alertaCpf.style.display = 'none';
       }
-      ajustarEspacoContainer();
     }
 
     function fecharModalIos() {
@@ -514,7 +512,6 @@
         if (data.cpf) {
           usuarioTemCpfVinculado = true;
           document.getElementById('alerta-vincular').style.display = 'none';
-          ajustarEspacoContainer();
         }
       } catch (e) { document.getElementById('user-pontos').innerHTML = `-- <span>pts</span>`; }
     }
@@ -561,7 +558,6 @@
         const data = await Api.vincularCpf(COMERCIO_SLUG, MEU_DEVICE_ID, limpo);
         usuarioTemCpfVinculado = true;
         document.getElementById('alerta-vincular').style.display = 'none';
-        ajustarEspacoContainer();
         document.getElementById('user-pontos').innerHTML = `${data.pontos} <span>pts</span>`;
         alert("CPF vinculado com sucesso!");
       } catch (e) { alert("Erro: " + e.message); }
