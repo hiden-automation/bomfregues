@@ -333,149 +333,92 @@
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 
   <script>
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    OneSignalDeferred.push(async function(OneSignal) {
-      try {
-        await OneSignal.init({
-          appId: "3848f19b-f5ef-45a5-a307-ad0a89725eb1",
-          serviceWorkerParam: { scope: "/" },
-          serviceWorkerPath: "OneSignalSDKWorker.js",
-          welcomeNotification: { disable: true },
-          notifyButton: { enable: false }
-        });
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    try {
+      await OneSignal.init({
+        appId: "3848f19b-f5ef-45a5-a307-ad0a89725eb1",
+        serviceWorkerParam: { scope: "/" },
+        serviceWorkerPath: "OneSignalSDKWorker.js",
+        welcomeNotification: { disable: true },
+        notifyButton: { enable: false },
+        allowLocalhostAsSecureOrigin: true
+      });
+      
+      if (typeof COMERCIO_SLUG !== 'undefined' && COMERCIO_SLUG) {
         await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
-        atualizarBotoesFlutuantes();
-        OneSignal.User.PushSubscription.addEventListener("change", atualizarBotoesFlutuantes);
-      } catch (e) {
-        console.warn("OneSignal init aviso:", e);
       }
-    });
-
-    let deferredPrompt = null;
-    const isIos = () => /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
-    const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
+      
       atualizarBotoesFlutuantes();
-    });
+      OneSignal.User.PushSubscription.addEventListener("change", atualizarBotoesFlutuantes);
+    } catch (e) {
+      console.error("Erro no OneSignal.init:", e);
+    }
+  });
 
-    function atualizarBotoesFlutuantes() {
-      const btnInstall = document.getElementById('btn-install-action');
-      const btnPush = document.getElementById('btn-push-action');
-      const alertaCpf = document.getElementById('alerta-vincular');
-      const stackArea = document.querySelector('.floating-stack-area');
-      const titles = document.querySelectorAll('.headline-bar-fixed');
-
-      const standalone = isStandalone();
-
-      // 1. Regra do botão Instalar: aparece no navegador fora do modo standalone
-      if (!standalone) {
-        btnInstall.style.display = 'inline-flex';
-      } else {
-        btnInstall.style.display = 'none';
-      }
-
-      // 2. Regra do botão Push: aparece após instalado e enquanto não estiver inscrito
-      const inscrito = window.OneSignal?.User?.PushSubscription?.optedIn ?? false;
-      const permitido = ("Notification" in window) && Notification.permission === "granted";
-      if (standalone && (!inscrito || !permitido)) {
-        btnPush.style.display = 'inline-flex';
-      } else {
-        btnPush.style.display = 'none';
-      }
-
-      // 3. Ajuste de margem: se não houver nenhum botão flutuante ativo, aumenta a margem do título
-      const algumAtivo = (btnInstall.style.display !== 'none') || 
-                         (btnPush.style.display !== 'none') || 
-                         (alertaCpf.style.display === 'flex');
-
-      if (!algumAtivo) {
-        stackArea.style.marginBottom = '0px';
-        titles.forEach(t => t.style.setProperty('margin-top', '36px', 'important'));
-      } else {
-        stackArea.style.marginBottom = '22px';
-        titles.forEach(t => t.style.setProperty('margin-top', '18px', 'important'));
-      }
+  async function ativarPush() {
+    const btn = document.getElementById('btn-push-action');
+    if (btn) {
+      btn.innerText = "Verificando...";
+      btn.disabled = true;
     }
 
-    async function acionarInstalacao() {
-      if (isIos()) {
-        document.getElementById('iosOverlay').style.display = 'block';
-        setTimeout(() => document.getElementById('iosSheet').classList.add('active'), 10);
-      } else if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        if (outcome === 'accepted') {
-          document.getElementById('btn-install-action').style.display = 'none';
-          atualizarBotoesFlutuantes();
-        }
-      } else {
-        alert("Para instalar, abra o menu de configurações do navegador (três pontinhos) e selecione 'Adicionar à tela inicial' ou 'Instalar aplicativo'.");
-      }
-    }
-
-    function fecharModalIos() {
-      document.getElementById('iosSheet').classList.remove('active');
-      setTimeout(() => document.getElementById('iosOverlay').style.display = 'none', 300);
-    }
-
-    async function ativarPush() {
-      const btn = document.getElementById('btn-push-action');
-      if (btn) {
-        btn.innerText = "Solicitando permissão...";
-        btn.disabled = true;
+    try {
+      // Checagem 1: Suporte da API
+      if (!("Notification" in window)) {
+        throw new Error("Seu navegador não suporta notificações Web.");
       }
 
-      const timeoutId = setTimeout(() => {
-        if (btn && btn.disabled) {
-          btn.innerText = "Receber avisos de promoções";
-          btn.disabled = false;
-          alert("Aguardando permissão no sistema. Se já permitiu, reabra o aplicativo.");
-          atualizarBotoesFlutuantes();
-        }
-      }, 6000);
+      // Checagem 2: Status da permissão
+      const estadoAtual = Notification.permission;
+      if (estadoAtual === "denied") {
+        throw new Error("As notificações foram bloqueadas anteriormente. Toque no ícone de configurações/cadeado na barra de endereços e altere a permissão para 'Permitir'.");
+      }
 
-      try {
-        if (!("Notification" in window)) {
-          throw new Error("Este dispositivo não suporta notificações web.");
-        }
+      // Checagem 3: Solicitação nativa direta
+      if (btn) btn.innerText = "Solicitando no sistema...";
+      const respostaPermissao = await Notification.requestPermission();
 
-        if (Notification.permission === "denied") {
-          throw new Error("As notificações estão bloqueadas nas configurações do aparelho ou navegador.");
-        }
+      if (respostaPermissao !== "granted") {
+        throw new Error(`Permissão não concedida (Status: ${respostaPermissao}).`);
+      }
 
-        await new Promise((resolve, reject) => {
-          window.OneSignalDeferred.push(async function(OneSignal) {
-            try {
-              await OneSignal.Notifications.requestPermission();
+      // Checagem 4: Vinculação no OneSignal
+      if (btn) btn.innerText = "Registrando aparelho...";
+      
+      await new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error("Tempo esgotado ao registrar no OneSignal. Verifique se o Site URL no painel bate com este domínio.")), 7000);
+
+        window.OneSignalDeferred.push(async function(OneSignal) {
+          try {
+            await OneSignal.Notifications.requestPermission();
+            if (typeof COMERCIO_SLUG !== 'undefined') {
               await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
-              if (OneSignal.User.PushSubscription) {
-                await OneSignal.User.PushSubscription.optIn();
-              }
-              resolve();
-            } catch (err) {
-              reject(err);
             }
-          });
+            if (OneSignal.User.PushSubscription) {
+              await OneSignal.User.PushSubscription.optIn();
+            }
+            clearTimeout(timer);
+            resolve();
+          } catch (sdkErr) {
+            clearTimeout(timer);
+            reject(sdkErr);
+          }
         });
+      });
 
-        clearTimeout(timeoutId);
-        alert("✅ Notificações ativadas com sucesso!");
-      } catch (err) {
-        clearTimeout(timeoutId);
-        alert(err.message || "Não foi possível ativar as notificações.");
-      } finally {
-        if (btn) {
-          btn.innerText = "Receber avisos de promoções";
-          btn.disabled = false;
-        }
-        atualizarBotoesFlutuantes();
+      alert("✅ Notificações ativadas com sucesso!");
+    } catch (err) {
+      alert("Aviso de Notificação:\n" + (err.message || err));
+    } finally {
+      if (btn) {
+        btn.innerText = "Receber avisos de promoções";
+        btn.disabled = false;
       }
+      atualizarBotoesFlutuantes();
     }
-  </script>
+  }
+</script>
 </head>
 <body>
 
@@ -506,7 +449,7 @@
       <!-- Card 3: Recuperação de CPF (na aba de Fidelidade) -->
       <div id="alerta-vincular" class="cpf-floating-card">
         <div class="cpf-floating-title">
-          Vincule seu CPF para não perder seu saldo caso troque de celular.
+          Pontos salvos no celular. Vincule seu CPF para não perder seu saldo caso troque de aparelho.
         </div>
         <button class="cpf-floating-action" onclick="vincularCpfModal()">Vincular meu CPF agora</button>
       </div>
