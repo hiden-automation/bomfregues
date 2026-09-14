@@ -977,6 +977,36 @@
       .color-card-friendly { flex-direction: row; justify-content: space-between; padding: 12px 16px; }
       .color-hex-badge { width: 90px; }
     }
+
+    /* Container */
+    .hero-ctas {
+      display: flex;
+      gap: 12px;
+    }
+
+    /* Estilo comum para os dois botões */
+    .btn-hero-primary,
+    .btn-hero-secondary {
+      display: inline-flex;       /* Permite alinhar o texto perfeitamente no centro */
+      align-items: center;        /* Centraliza na vertical */
+      justify-content: center;     /* Centraliza o texto e a seta na horizontal */
+      width: fit-content;         /* Garante que não estique além do conteúdo */
+      padding: 12px 24px;         /* Ajuste o espaçamento interno conforme seu layout */
+      text-decoration: none;
+    }
+
+    /* Mobile: um embaixo do outro */
+    @media (max-width: 640px) {
+      .hero-ctas {
+        flex-direction: column;
+        align-items: center;      /* Evita o stretch padrão e centraliza os botões na tela */
+      }
+
+      .btn-hero-primary,
+      .btn-hero-secondary {
+        width: fit-content;       /* Força o botão a ter apenas o tamanho do conteúdo */
+      }
+    }
   </style>
 
   <script src="js/api.js"></script>
@@ -999,7 +1029,7 @@
       </ul>
 
       <div class="nav-actions">
-        <a href="./login.html" class="btn-pill-dark">Criar app grátis</a>
+        <a href="./login.html" class="btn-pill-dark">Criar app</a>
       </div>
     </nav>
   </div>
@@ -1016,12 +1046,12 @@
       </h1>
 
       <p class="hero-sub">
-        PWA próprio para o seu negócio: pontuação automática por QR Code da nota fiscal, catálogo de prêmios e disparo de notificações push direto no celular dos seus clientes.
+        Aplicativo próprio para o seu negócio: pontuação automática por QR Code da nota fiscal, catálogo de prêmios e disparo de notificações push direto no celular dos seus clientes.
       </p>
 
       <div class="hero-ctas">
         <a href="./login.html" class="btn-hero-primary">
-          Criar meu app em minutos &rarr;
+          Quero meu app de fidelidade &rarr;
         </a>
         <a href="#como-funciona" class="btn-hero-secondary">
           Ver como funciona
@@ -1049,29 +1079,29 @@
   </header>
 
   <!-- Trust Bar -->
-  <section class="trust-bar">
+  <section class="trust-bar" id="funcionalidades">
     <div class="trust-inner">
       <div class="trust-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Publique seu app em menos de 5 minutos
+      </div>
+      <div class="trust-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        Assinatura muito acessível
+        Envie Promoções para seus Clientes
       </div>
       <div class="trust-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Leitor de Nota com Trava por CNPJ
-      </div>
-      <div class="trust-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Setup em menos de 5 minutos
+        Gerencie Pontos com Leitor de Nota
       </div>
       <div class="trust-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        Notificações Push no Celular
+        Notifique seus Clientes pelo Celular
       </div>
     </div>
   </section>
 
   <!-- SEÇÃO FUNCIONALIDADES COM CARROSSEL E SETA LATERAL DIREITA EM PRETO -->
-  <section class="carousel-section" id="funcionalidades">
+  <section class="carousel-section">
     <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
       <span class="section-tag">Recursos do Sistema</span>
       <h2 class="section-title">O que o Bom Freguês faz por você</h2>
@@ -1305,6 +1335,11 @@
         <p>O cliente pontua lendo a nota fiscal e você dispara avisos de novas ofertas quando quiser pelo painel admin.</p>
       </div>
     </div>
+    <div style="text-align:center; margin-top:60px;">
+        <a href="./login.html" class="btn-hero-primary">
+          Quero meu app de fidelidade &rarr;
+        </a>
+      </div>
   </section>
 
   <!-- FAQ (Perguntas Frequentes) -->
@@ -1352,6 +1387,11 @@
         <div class="faq-answer">
           Não. O cliente pode vincular o CPF dele ao saldo com facilidade a qualquer momento. Ao abrir o app em outro aparelho e digitar o mesmo CPF, o saldo anterior é resgatado automaticamente.
         </div>
+      </div>
+      <div style="text-align:center; margin-top:40px;">
+        <a href="./login.html" class="btn-hero-primary">
+          Quero meu app de fidelidade &rarr;
+        </a>
       </div>
     </div>
   </section>

@@ -21,7 +21,6 @@ function obterDeviceId() {
 
 const MEU_DEVICE_ID = obterDeviceId();
 
-// Calcula se a cor de fundo precisa de texto escuro ou claro
 function calcularCorTextoContraste(hex) {
   if (!hex) return '#ffffff';
   let c = hex.replace('#', '');
@@ -29,8 +28,6 @@ function calcularCorTextoContraste(hex) {
   const r = parseInt(c.substring(0, 2), 16) || 0;
   const g = parseInt(c.substring(2, 4), 16) || 0;
   const b = parseInt(c.substring(4, 6), 16) || 0;
-  
-  // Fórmula padrão YIQ para percepção de luminosidade
   const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
   return yiq >= 150 ? '#0f172a' : '#ffffff';
 }
@@ -53,8 +50,11 @@ async function inicializarTema() {
 
     document.querySelectorAll('.dinamico-nome').forEach(el => el.innerText = dados.nome_fantasia);
     document.querySelectorAll('.dinamico-logo').forEach(el => {
-      el.src = dados.logo_url;
-      el.alt = dados.nome_fantasia;
+      if (dados.logo_url) {
+        el.src = dados.logo_url;
+        el.alt = dados.nome_fantasia;
+        el.style.display = 'block';
+      }
     });
 
     document.title = dados.nome_fantasia;
@@ -86,7 +86,8 @@ function gerarManifestDinamico(dados) {
       {
         src: dados.icone_pwa_url || dados.logo_url || "https://cdn-icons-png.flaticon.com/512/924/924514.png",
         sizes: "512x512",
-        type: "image/png"
+        type: "image/png",
+        purpose: "any"
       }
     ]
   };
@@ -103,7 +104,8 @@ function gerarManifestDinamico(dados) {
   manifestLink.href = manifestUrl;
 }
 
-function comprimirImagemParaBase64(file, maxDimensao = 800, qualidade = 0.80) {
+// Suporte nativo a transparência alfa
+function comprimirImagemParaBase64(file, maxDimensao = 800) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -127,8 +129,13 @@ function comprimirImagemParaBase64(file, maxDimensao = 800, qualidade = 0.80) {
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
+        
+        // Limpa o canvas para garantir transparência absoluta
+        ctx.clearRect(0, 0, width, height);
         ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL('image/jpeg', qualidade));
+        
+        // Formato PNG para reter transparência total
+        resolve(canvas.toDataURL('image/png'));
       };
       img.onerror = reject;
     };

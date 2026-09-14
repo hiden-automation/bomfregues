@@ -28,15 +28,47 @@
     .right-panel { flex: 1.15; background: #ffffff; display: flex; align-items: center; justify-content: center; padding: 40px 32px; }
     .auth-box { width: 100%; max-width: 440px; }
     .auth-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 40px; color: #111827; margin-bottom: 8px; }
-    .auth-sub { font-size: 14px; color: #64748b; margin-bottom: 32px; }
+    .auth-sub { font-size: 14px; color: #64748b; margin-bottom: 28px; }
 
     .form-group { margin-bottom: 18px; }
     .form-group label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 8px; }
-    .auth-input { width: 100%; padding: 13px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; outline: none; }
+    .auth-input { width: 100%; padding: 13px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; outline: none; transition: border-color 0.2s; }
     .auth-input:focus { border-color: #171717; }
 
-    .btn-submit-auth { width: 100%; background: #171412; color: #ffffff; border: none; border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-    .btn-submit-auth:hover { background: #2a2522; }
+    .username-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .username-prefix {
+      position: absolute;
+      left: 14px;
+      color: #94a3b8;
+      font-weight: 700;
+      font-size: 14px;
+      user-select: none;
+    }
+    .auth-input-username {
+      padding-left: 30px;
+    }
+
+    .helper-text {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 5px;
+      line-height: 1.4;
+    }
+
+    .validation-status {
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .btn-submit-auth { width: 100%; background: #171412; color: #ffffff; border: none; border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: background 0.15s; }
+    .btn-submit-auth:hover:not(:disabled) { background: #2a2522; }
+    .btn-submit-auth:disabled { background: #94a3b8; cursor: not-allowed; }
 
     .toggle-auth-mode { text-align: center; margin-top: 24px; font-size: 13px; color: #64748b; }
     .toggle-auth-mode a { color: #171717; font-weight: 700; cursor: pointer; }
@@ -68,6 +100,19 @@
         <div id="auth-msg" class="msg-box"></div>
 
         <form onsubmit="executarAutenticacao(event)">
+          <!-- Campo exclusivo do modo de cadastro -->
+          <div class="form-group" id="group-username" style="display: none;">
+            <label>Nome de usuário do comércio (endereço do seu app)</label>
+            <div class="username-input-wrapper">
+              <span class="username-prefix">@</span>
+              <input type="text" id="auth-username" class="auth-input auth-input-username" placeholder="seunegocio" autocomplete="off" oninput="validarNomeUsuarioEmTempoReal(this)">
+            </div>
+            <div id="username-feedback" class="validation-status"></div>
+            <p class="helper-text">
+              Será o link exclusivo dos seus clientes (ex: seunegocio). <strong>Atenção: não poderá ser alterado após a criação.</strong>
+            </p>
+          </div>
+
           <div class="form-group">
             <label>E-mail</label>
             <input type="email" id="auth-email" class="auth-input" placeholder="seu@email.com" required>
@@ -91,82 +136,173 @@
 
   <script>
     let modoCadastro = false;
+    let debounceTimer = null;
+    let usernameValidoEDisponivel = false;
 
     function alternarModo() {
       modoCadastro = !modoCadastro;
       document.getElementById('auth-title-text').innerText = modoCadastro ? "Criar conta de lojista" : "Bem-vindo(a) de volta";
-      document.getElementById('auth-sub-text').innerText = modoCadastro ? "Cadastre-se com seu e-mail para criar e gerenciar seu app." : "Entre para gerenciar o programa de fidelidade do seu comércio.";
+      document.getElementById('auth-sub-text').innerText = modoCadastro ? "Cadastre-se para criar o aplicativo exclusivo do seu comércio." : "Entre para gerenciar o programa de fidelidade do seu comércio.";
       document.getElementById('btn-submit-text').innerText = modoCadastro ? "Criar Conta" : "Entrar";
       document.getElementById('label-toggle').innerText = modoCadastro ? "Já tem uma conta?" : "Não tem conta?";
       document.getElementById('btn-toggle-modo').innerText = modoCadastro ? "Faça Login" : "Cadastre-se";
+
+      const groupUsername = document.getElementById('group-username');
+      const inputUsername = document.getElementById('auth-username');
+      if (modoCadastro) {
+        groupUsername.style.display = "block";
+        inputUsername.required = true;
+      } else {
+        groupUsername.style.display = "none";
+        inputUsername.required = false;
+      }
+    }
+
+    function sanitizarSlug(texto) {
+      return texto
+        .toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9-]/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+    }
+
+    function validarNomeUsuarioEmTempoReal(input) {
+      const valorBruto = input.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+      input.value = valorBruto;
+
+      const feedback = document.getElementById('username-feedback');
+      clearTimeout(debounceTimer);
+      usernameValidoEDisponivel = false;
+
+      const slugLimpo = sanitizarSlug(input.value);
+
+      if (slugLimpo.length < 3) {
+        feedback.style.display = "block";
+        feedback.style.color = "#dc2626";
+        feedback.innerText = "Mínimo de 3 caracteres (apenas letras, números e traço).";
+        return;
+      }
+
+      feedback.style.display = "block";
+      feedback.style.color = "#d97706";
+      feedback.innerText = "Verificando disponibilidade...";
+
+      debounceTimer = setTimeout(async () => {
+        try {
+          const disponivel = await Api.verificarDisponibilidadeSlug(slugLimpo);
+          if (disponivel) {
+            feedback.style.color = "#16a34a";
+            feedback.innerText = `✓ @${slugLimpo} está disponível!`;
+            usernameValidoEDisponivel = true;
+          } else {
+            feedback.style.color = "#dc2626";
+            feedback.innerText = `✕ @${slugLimpo} já está em uso por outro comércio. Escolha outro.`;
+            usernameValidoEDisponivel = false;
+          }
+        } catch (e) {
+          feedback.style.display = "none";
+        }
+      }, 350);
     }
 
     async function executarAutenticacao(e) {
-        e.preventDefault();
-        const email = document.getElementById('auth-email').value.trim();
-        const password = document.getElementById('auth-password').value;
-        const msg = document.getElementById('auth-msg');
-        const btn = document.getElementById('btn-submit-text');
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      const msg = document.getElementById('auth-msg');
+      const btn = document.getElementById('btn-submit-text');
 
-        btn.disabled = true;
-        btn.innerText = "Aguarde...";
-        msg.style.display = "none";
+      msg.style.display = "none";
 
-        try {
-            let userId = null;
+      let slugFinal = null;
+      if (modoCadastro) {
+        const inputUsername = document.getElementById('auth-username');
+        slugFinal = sanitizarSlug(inputUsername.value);
 
-            if (modoCadastro) {
-            const res = await Api.cadastrarUsuario(email, password);
-            userId = res.user?.id;
-            
-            if (!userId && res.session?.user?.id) {
-                userId = res.session.user.id;
-            }
+        if (!slugFinal || slugFinal.length < 3) {
+          msg.style.display = "block";
+          msg.style.background = "#fee2e2";
+          msg.style.color = "#991b1b";
+          msg.innerText = "O nome de usuário do comércio deve ter pelo menos 3 caracteres válidos.";
+          return;
+        }
 
-            // Se o Supabase exigir confirmação de e-mail e não retornar sessão imediata
-            if (!userId && res.user && !res.session) {
-                msg.style.display = "block";
-                msg.style.background = "#dcfce7";
-                msg.style.color = "#166534";
-                msg.innerText = "Conta criada com sucesso! Verifique seu e-mail para confirmar ou faça login.";
-                alternarModo();
-                return;
-            }
-            } else {
-            const res = await Api.loginUsuario(email, password);
-            userId = res.user?.id;
-            }
-
-            if (!userId) {
-            throw new Error("Não foi possível identificar o usuário. Tente fazer login.");
-            }
-
-            sessionStorage.setItem('saas_auth_user_id', userId);
-
-            // Tenta ver se já tem loja; se falhar ou for novo, leva pro setup
-            try {
-            const loja = await Api.getTenantPorUsuario(userId);
-            if (loja && loja.slug) {
-                window.location.href = `admin.html?loja=${loja.slug}`;
-                return;
-            }
-            } catch (lojaErr) {
-            console.warn("Loja não encontrada, indo para criação:", lojaErr);
-            }
-
-            // Usuário novo sem loja: vai direto para o admin configurar a primeira loja
-            window.location.href = `admin.html`;
-
-        } catch (err) {
+        if (!usernameValidoEDisponivel) {
+          const disponivel = await Api.verificarDisponibilidadeSlug(slugFinal);
+          if (!disponivel) {
             msg.style.display = "block";
             msg.style.background = "#fee2e2";
             msg.style.color = "#991b1b";
-            msg.innerText = "❌ " + (err.message || "Falha na autenticação");
-        } finally {
-            btn.disabled = false;
-            btn.innerText = modoCadastro ? "Criar Conta" : "Entrar";
+            msg.innerText = `O nome de usuário @${slugFinal} já está em uso.`;
+            return;
+          }
         }
+      }
+
+      btn.disabled = true;
+      btn.innerText = "Aguarde...";
+
+      try {
+        let userId = null;
+
+        if (modoCadastro) {
+          const res = await Api.cadastrarUsuario(email, password);
+          userId = res.user?.id;
+
+          if (!userId && res.session?.user?.id) {
+            userId = res.session.user.id;
+          }
+
+          if (!userId && res.user && !res.session) {
+            msg.style.display = "block";
+            msg.style.background = "#dcfce7";
+            msg.style.color = "#166534";
+            msg.innerText = "Conta criada com sucesso! Verifique seu e-mail para confirmar ou faça login.";
+            alternarModo();
+            return;
+          }
+
+          // Armazena o slug reservado para o setup imediato
+          sessionStorage.setItem('saas_pre_slug', slugFinal);
+        } else {
+          const res = await Api.loginUsuario(email, password);
+          userId = res.user?.id;
+        }
+
+        if (!userId) {
+          throw new Error("Não foi possível identificar o usuário. Tente fazer login.");
+        }
+
+        sessionStorage.setItem('saas_auth_user_id', userId);
+
+        try {
+          const loja = await Api.getTenantPorUsuario(userId);
+          if (loja && loja.slug) {
+            window.location.href = `admin.html?loja=${loja.slug}`;
+            return;
+          }
+        } catch (lojaErr) {
+          console.warn("Loja não encontrada:", lojaErr);
+        }
+
+        // Se tiver reservado o slug no cadastro, envia junto na URL do admin
+        if (slugFinal) {
+          window.location.href = `admin.html?loja=${slugFinal}`;
+        } else {
+          window.location.href = `admin.html`;
+        }
+
+      } catch (err) {
+        msg.style.display = "block";
+        msg.style.background = "#fee2e2";
+        msg.style.color = "#991b1b";
+        msg.innerText = "❌ " + (err.message || "Falha na autenticação");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = modoCadastro ? "Criar Conta" : "Entrar";
+      }
     }
-    </script>
+  </script>
 </body>
 </html>

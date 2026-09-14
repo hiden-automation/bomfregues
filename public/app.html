@@ -6,8 +6,8 @@
   <title>Carregando...</title>
 
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#121212">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#ffffff">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,23 +17,30 @@
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
   <style>
+    :root {
+      --cor-texto-header: #ffffff;
+      --cor-subtexto-header: rgba(255,255,255,0.85);
+      --borda-header: none;
+    }
+
     * { font-family: 'Plus Jakarta Sans', sans-serif; }
     .tab-view { display: none; }
     .tab-view.active { display: block; }
 
-    /* Header com Logo Livre: sem círculo, sem fundo e sem borda */
+    /* Header com Logo Livre e Transparência total */
     .top-header {
-      background: linear-gradient(180deg, var(--cor-primaria) 0%, #150505 100%);
-      padding: 24px 20px 28px 20px;
+      background: var(--cor-primaria) !important;
+      padding: 24px 20px 24px 20px;
       border-radius: 0 0 24px 24px;
       display: flex;
       align-items: center;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+      border-bottom: var(--borda-header);
+      box-shadow: none !important;
     }
 
     .clean-logo-wrap {
-      width: 54px;
-      height: 54px;
+      width: 52px;
+      height: 52px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -49,11 +56,21 @@
       max-height: 100%;
       object-fit: contain;
       display: block;
+      background: transparent !important;
     }
 
     .header-text-group { margin-left: 14px; }
-    .header-title-clean { font-size: 17px; font-weight: 800; color: #ffffff; line-height: 1.2; }
-    .header-sub-clean { font-size: 11px; color: #f1f5f9; opacity: 0.85; margin-top: 2px; }
+    .header-title-clean { 
+      font-size: 17px; 
+      font-weight: 800; 
+      color: var(--cor-texto-header) !important; 
+      line-height: 1.2; 
+    }
+    .header-sub-clean { 
+      font-size: 11px; 
+      color: var(--cor-subtexto-header) !important; 
+      margin-top: 2px; 
+    }
 
     .pwa-actions-wrapper {
       margin-bottom: 16px;
@@ -191,9 +208,7 @@
       background: #f1f5f9;
     }
 
-    .showcase-info {
-      padding: 16px;
-    }
+    .showcase-info { padding: 16px; }
 
     .showcase-badge {
       display: inline-block;
@@ -205,6 +220,7 @@
       border-radius: 6px;
       text-transform: uppercase;
       margin-bottom: 8px;
+      border: 1px solid rgba(0,0,0,0.06);
     }
 
     .showcase-title { font-size: 16px; font-weight: 800; color: var(--cor-texto); margin-bottom: 4px; }
@@ -226,12 +242,13 @@
       background: var(--cor-secundaria);
       padding: 5px 10px;
       border-radius: 6px;
+      border: 1px solid rgba(0,0,0,0.06);
     }
 
     .btn-claim {
       background: var(--cor-primaria);
-      color: #ffffff;
-      border: none;
+      color: var(--cor-texto-header);
+      border: 1px solid rgba(0,0,0,0.1);
       padding: 8px 16px;
       border-radius: 8px;
       font-size: 12px;
@@ -275,7 +292,7 @@
           await OneSignal.Notifications.requestPermission();
           await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
           await OneSignal.User.PushSubscription.optIn();
-          alert("Notificacoes ativadas!");
+          alert("Notificações ativadas com sucesso!");
           checarStatusPush();
         } catch (e) { alert("Erro: " + e.message); }
       });
@@ -301,7 +318,7 @@
       </button>
 
       <button id="btn-push-action" class="btn-action-clean btn-push" onclick="ativarPush()" style="display:none;">
-        Receber Avisos de Promocoes
+        Receber Avisos de Promoções
       </button>
     </div>
 
@@ -314,13 +331,13 @@
     <!-- Fidelidade -->
     <div id="view-fidelidade" class="tab-view">
       <div id="alerta-vincular" class="cpf-box-clean">
-        Seus pontos estao salvos apenas neste aparelho. Vincule seu CPF para recuperar seu saldo caso troque de celular.
+        Seus pontos estão salvos apenas neste aparelho. Vincule seu CPF para recuperar seu saldo caso troque de celular.
         <button onclick="vincularCpfModal()">Vincular CPF</button>
       </div>
 
       <div class="points-hub-card">
         <div class="points-total" id="user-pontos">-- <span>pts</span></div>
-        <div class="points-label-sub">Saldo Disponivel</div>
+        <div class="points-label-sub">Saldo Disponível</div>
 
         <button class="btn-scan-trigger" onclick="iniciarScanner()" id="btn-scan">
           Escanear QR Code da Nota Fiscal
@@ -332,8 +349,8 @@
         </div>
       </div>
 
-      <div class="headline-bar">Catalogo de Resgate</div>
-      <div id="lista-premios">Carregando premios...</div>
+      <div class="headline-bar">Catálogo de Resgate</div>
+      <div id="lista-premios">Carregando prêmios...</div>
     </div>
   </div>
 
@@ -348,15 +365,12 @@
     </a>
   </nav>
 
-  <!-- Modal Tutorial iPhone Safari -->
   <div class="ios-overlay" id="iosOverlay" onclick="fecharModalIos()"></div>
   <div class="ios-sheet" id="iosSheet">
     <h3 style="font-size:16px; font-weight:800; text-align:center; margin-bottom:4px;">Instalar no iPhone</h3>
-    <p style="font-size:12px; color:var(--cor-subtexto); text-align:center; margin-bottom:18px;">Adicione o app a Tela de Inicio em dois passos:</p>
-
-    <div style="font-size:13px; margin-bottom:12px;">1. Na barra inferior do Safari, toque no botao <strong>Compartilhar</strong>.</div>
-    <div style="font-size:13px; margin-bottom:20px;">2. Role e toque em <strong>Adicionar a Tela de Inicio</strong>.</div>
-
+    <p style="font-size:12px; color:var(--cor-subtexto); text-align:center; margin-bottom:18px;">Adicione o app à Tela de Início em dois passos:</p>
+    <div style="font-size:13px; margin-bottom:12px;">1. Na barra inferior do Safari, toque no botão <strong>Compartilhar</strong>.</div>
+    <div style="font-size:13px; margin-bottom:20px;">2. Role e toque em <strong>Adicionar à Tela de Início</strong>.</div>
     <button class="btn-action-clean btn-install" onclick="fecharModalIos()">Entendido</button>
   </div>
 
@@ -390,7 +404,7 @@
         deferredPrompt = null;
         if (outcome === 'accepted') btnInstall.style.display = 'none';
       } else {
-        alert("Toque no menu do navegador e selecione 'Adicionar a tela inicial'.");
+        alert("Toque no menu do navegador e selecione 'Adicionar à tela inicial'.");
       }
     }
 
@@ -404,7 +418,7 @@
       try {
         const promocoes = await Api.listarPromocoes(COMERCIO_SLUG);
         if (!promocoes.length) {
-          box.innerHTML = `<div class="showcase-card" style="padding:24px; text-align:center; font-size:13px; color:var(--cor-subtexto);">Nenhuma promocao ativa no momento.</div>`;
+          box.innerHTML = `<div class="showcase-card" style="padding:24px; text-align:center; font-size:13px; color:var(--cor-subtexto);">Nenhuma promoção ativa no momento.</div>`;
           return;
         }
 
@@ -435,7 +449,7 @@
       try {
         const premios = await Api.listarPremios(COMERCIO_SLUG);
         if (!premios.length) {
-          box.innerHTML = `<div class="showcase-card" style="padding:24px; text-align:center; font-size:13px; color:var(--cor-subtexto);">Nenhum premio cadastrado.</div>`;
+          box.innerHTML = `<div class="showcase-card" style="padding:24px; text-align:center; font-size:13px; color:var(--cor-subtexto);">Nenhum prêmio cadastrado.</div>`;
           return;
         }
 
@@ -464,15 +478,15 @@
     }
 
     async function vincularCpfModal() {
-      const cpf = prompt("Digite seu CPF (11 numeros):");
+      const cpf = prompt("Digite seu CPF (11 números):");
       if (!cpf) return;
       const limpo = cpf.replace(/\D/g, '');
-      if (limpo.length !== 11) return alert("CPF invalido.");
+      if (limpo.length !== 11) return alert("CPF inválido.");
       try {
         const data = await Api.vincularCpf(COMERCIO_SLUG, MEU_DEVICE_ID, limpo);
         document.getElementById('alerta-vincular').style.display = 'none';
         document.getElementById('user-pontos').innerHTML = `${data.pontos} <span>pts</span>`;
-        alert("CPF vinculado!");
+        alert("CPF vinculado com sucesso!");
       } catch (e) { alert("Erro: " + e.message); }
     }
 
@@ -488,7 +502,7 @@
         { fps: 15, qrbox: { width: 220, height: 220 } },
         (decodedText) => { pararScanner(); processarNota(decodedText); },
         () => {}
-      ).catch(err => { alert("Erro na camera: " + (err.message || err)); pararScanner(); });
+      ).catch(err => { alert("Erro na câmera: " + (err.message || err)); pararScanner(); });
     }
 
     function pararScanner() {

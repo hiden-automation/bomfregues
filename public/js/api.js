@@ -1,6 +1,6 @@
 const PROJECT_REF = "uskfiencjaqqlhglpuqt";
 const SUPABASE_URL = `https://${PROJECT_REF}.supabase.co`;
-const SUPABASE_ANON_KEY = "sb_publishable_31CDkXjDETBd12KK8yhW3w_hmyQZBqO"; // Cole sua anon key do Supabase Settings > API
+const SUPABASE_ANON_KEY = "sb_publishable_31CDkXjDETBd12KK8yhW3w_hmyQZBqO"; // Cole sua chave anon real aqui
 const BASE_FUNCTIONS_URL = `${SUPABASE_URL}/functions/v1`;
 
 let supabaseClient = null;
@@ -44,6 +44,26 @@ const Api = {
     await supabaseClient.auth.signOut();
   },
 
+  // Validação de slug disponível
+  async verificarDisponibilidadeSlug(slug) {
+    if (!slug) return false;
+    const slugNormalizado = slug.toLowerCase().trim();
+    if (supabaseClient) {
+      const { data, error } = await supabaseClient
+        .from('comercios')
+        .select('id')
+        .eq('slug', slugNormalizado)
+        .maybeSingle();
+
+      if (error) {
+        console.warn("Erro ao consultar slug:", error.message);
+        return true;
+      }
+      return !data; // Retorna true se não existe ninguém usando
+    }
+    return true;
+  },
+
   // Tenant
   async getTenant(slug) {
     const res = await fetch(`${BASE_FUNCTIONS_URL}/tenant-manager?slug=${slug}&t=${Date.now()}`);
@@ -55,20 +75,20 @@ const Api = {
   async getTenantPorUsuario(userId) {
     if (!userId) return null;
     if (supabaseClient) {
-        const { data, error } = await supabaseClient
+      const { data, error } = await supabaseClient
         .from('comercios')
         .select('*')
         .eq('user_id', userId)
         .maybeSingle();
 
-        if (error) {
-        console.warn("Aviso ao buscar loja do usuario:", error.message);
+      if (error) {
+        console.warn("Aviso ao buscar loja do usuário:", error.message);
         return null;
-        }
-        return data;
+      }
+      return data;
     }
     return null;
-},
+  },
 
   async cadastrarTenant(payload) {
     const res = await fetch(`${BASE_FUNCTIONS_URL}/tenant-manager`, {

@@ -26,20 +26,21 @@
       --accent: #ea580c;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
-
-
-    .brand-logo {
-      font-family: 'DM Serif Display', Georgia, serif;
-      font-size: 26px;
-      color: #111;
-      text-decoration: none;
-      letter-spacing: -0.5px;
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; 
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .brand-dot {
-      color: #ea580c;
+    body { 
+      background: var(--bg); 
+      color: var(--text); 
+      min-height: 100vh; 
+      display: flex; 
+      flex-direction: column; 
+      overflow-x: hidden;
     }
 
     .top-nav {
@@ -53,12 +54,13 @@
       position: sticky;
       top: 0;
       z-index: 50;
+      width: 100%;
     }
 
     .brand-group {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
     }
 
     .brand-title {
@@ -75,12 +77,16 @@
       background: #f5f5f4;
       padding: 4px 10px;
       border-radius: 6px;
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 10px;
     }
 
     .btn-link-pwa {
@@ -89,10 +95,11 @@
       color: #ea580c;
       background: #fff7ed;
       border: 1px solid #ffedd5;
-      padding: 8px 14px;
+      padding: 7px 12px;
       border-radius: 8px;
       text-decoration: none;
       display: none;
+      white-space: nowrap;
     }
 
     .btn-logout {
@@ -101,20 +108,31 @@
       color: #dc2626;
       font-size: 12px;
       font-weight: 700;
-      padding: 7px 14px;
+      padding: 7px 12px;
       border-radius: 8px;
       cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tabs-bar-container {
+      width: 100%;
+      border-bottom: 1px solid var(--border);
+      background: #ffffff;
     }
 
     .tabs-bar {
       max-width: 1200px;
-      width: 100%;
-      margin: 24px auto 0;
+      margin: 0 auto;
       padding: 0 24px;
       display: flex;
       gap: 8px;
-      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
+
+    .tabs-bar::-webkit-scrollbar { display: none; }
 
     .tab-trigger {
       background: transparent;
@@ -122,11 +140,12 @@
       font-size: 13px;
       font-weight: 700;
       color: var(--muted);
-      padding: 12px 18px;
+      padding: 16px 14px;
       cursor: pointer;
       border-bottom: 2px solid transparent;
       margin-bottom: -1px;
       transition: all 0.15s ease;
+      flex-shrink: 0;
     }
 
     .tab-trigger:hover { color: var(--text); }
@@ -135,7 +154,7 @@
     .content-area {
       max-width: 1200px;
       width: 100%;
-      margin: 28px auto 60px;
+      margin: 24px auto 60px;
       padding: 0 24px;
       flex: 1;
     }
@@ -154,7 +173,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 28px;
+      padding: 24px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.02);
       margin-bottom: 24px;
     }
@@ -169,7 +188,8 @@
     .card-subtitle {
       font-size: 13px;
       color: var(--muted);
-      margin-bottom: 22px;
+      margin-bottom: 20px;
+      line-height: 1.4;
     }
 
     .form-group {
@@ -202,10 +222,16 @@
       border-color: #1c1917;
     }
 
+    .input-control:disabled {
+      background: #f5f5f4;
+      color: #78716c;
+      cursor: not-allowed;
+    }
+
     .color-picker-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      gap: 10px;
       margin-top: 4px;
     }
 
@@ -213,7 +239,7 @@
       border: 1px solid var(--border);
       background: #fafaf9;
       border-radius: 12px;
-      padding: 12px;
+      padding: 10px 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -221,8 +247,8 @@
     }
 
     .color-circle {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       border: 3px solid #ffffff;
       box-shadow: 0 2px 6px rgba(0,0,0,0.12);
@@ -240,7 +266,8 @@
     }
 
     .color-hex {
-      width: 76px;
+      width: 100%;
+      max-width: 76px;
       font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
@@ -251,38 +278,81 @@
       background: #fff;
     }
 
-    /* Container de Logo com Exibição Atual */
-    .logo-container-row {
+    /* Container de Upload de Logo Transparente */
+    .logo-upload-card {
+      border: 1.5px dashed #cbd5e1;
+      background: #fafaf9;
+      border-radius: 14px;
+      padding: 16px;
       display: flex;
       align-items: center;
       gap: 16px;
-      padding: 12px 14px;
-      background: #fafaf9;
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      transition: border-color 0.2s, background 0.2s;
     }
 
-    .logo-current-thumb {
-      width: 48px;
-      height: 48px;
+    .logo-upload-card:hover {
+      border-color: #94a3b8;
+      background: #f8fafc;
+    }
+
+    .logo-preview-box {
+      width: 58px;
+      height: 58px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      background: transparent;
+      background: transparent !important;
+      border: none !important;
+      overflow: hidden;
     }
 
-    .logo-current-thumb img {
+    .logo-preview-box img {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
+    }
+
+    .logo-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .btn-select-file-custom {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      border: 1.5px solid #d6d3d1;
+      color: #1c1917;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-select-file-custom:hover {
+      background: #f5f5f4;
+      border-color: #a8a29e;
+    }
+
+    .logo-status-txt {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 5px;
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .btn-submit {
       background: var(--dark-btn);
       color: #ffffff;
       border: none;
-      padding: 13px 22px;
+      padding: 14px 22px;
       border-radius: 10px;
       font-size: 13px;
       font-weight: 700;
@@ -291,6 +361,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      width: 100%;
     }
 
     .btn-submit:disabled {
@@ -298,13 +369,14 @@
       cursor: not-allowed;
     }
 
+    /* Mockup */
     .mockup-sticky {
       position: sticky;
       top: 96px;
     }
 
     .phone-frame {
-      max-width: 340px;
+      max-width: 330px;
       margin: 0 auto;
       background: #ffffff;
       border: 8px solid #1c1917;
@@ -316,17 +388,17 @@
       flex-direction: column;
     }
 
-    /* Header no Mockup: Cor plana pura, sem gradientes ou sombras escuras */
     .mockup-header {
       padding: 24px 18px 20px;
       display: flex;
       align-items: center;
       gap: 14px;
       transition: background-color 0.2s ease, color 0.2s ease;
-      background-color: #800000;
-      color: #ffffff;
+      background-color: #ffffff;
+      color: #0f172a;
     }
 
+    /* Logo livre e transparente sem fundo */
     .mockup-logo-free {
       width: 50px;
       height: 50px;
@@ -386,21 +458,23 @@
 
     .share-row {
       display: flex;
-      gap: 24px;
+      gap: 20px;
       align-items: center;
       flex-wrap: wrap;
     }
 
     .qr-box {
-      padding: 12px;
+      padding: 10px;
       background: #ffffff;
       border: 1px solid var(--border);
       border-radius: 12px;
+      display: flex;
+      justify-content: center;
     }
 
     .share-info {
       flex: 1;
-      min-width: 240px;
+      min-width: 200px;
     }
 
     .pwa-url-label {
@@ -422,24 +496,28 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px;
+      padding: 12px 14px;
       background: #fafaf9;
       border: 1px solid var(--border);
       border-radius: 12px;
+      gap: 10px;
     }
 
     .crud-card-left {
       display: flex;
       align-items: center;
       gap: 12px;
+      min-width: 0;
+      flex: 1;
     }
 
     .crud-card-img {
-      width: 48px;
-      height: 48px;
+      width: 46px;
+      height: 46px;
       border-radius: 8px;
       object-fit: cover;
       background: #e7e5e4;
+      flex-shrink: 0;
     }
 
     .btn-delete {
@@ -451,14 +529,20 @@
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
+      flex-shrink: 0;
     }
 
     @media (max-width: 900px) {
+      .top-nav { padding: 0 16px; }
+      .content-area { padding: 0 16px; margin: 16px auto 40px; }
       .editor-grid { grid-template-columns: 1fr; }
       .mockup-sticky { display: none; }
-      .top-nav { padding: 0 16px; }
-      .content-area { padding: 0 16px; }
-      .tabs-bar { padding: 0 16px; }
+      .card { padding: 20px 16px; }
+      .share-row { flex-direction: column; align-items: stretch; }
+      .qr-box { align-self: center; }
+      .crud-card { flex-direction: column; align-items: flex-start; }
+      .crud-card-left { width: 100%; }
+      .btn-delete { align-self: flex-end; width: 100%; margin-top: 6px; }
     }
   </style>
 </head>
@@ -466,23 +550,23 @@
 
   <header class="top-nav">
     <div class="brand-group">
-      <a href="#" class="brand-logo">
-        Bom Freguês<span class="brand-dot">.</span>
-      </a>
+      <div class="brand-title">Bom Freguês</div>
       <span class="store-badge" id="top-slug-badge">Painel Admin</span>
     </div>
 
     <div class="nav-actions">
-      <a href="#" target="_blank" class="btn-link-pwa" id="link-abrir-pwa">Abrir App do Cliente ↗</a>
+      <a href="#" target="_blank" class="btn-link-pwa" id="link-abrir-pwa">Ver App ↗</a>
       <button class="btn-logout" onclick="fazerLogout()">Sair</button>
     </div>
   </header>
 
-  <nav class="tabs-bar">
-    <button class="tab-trigger active" onclick="alternarAba('tab-identidade', this)">Identidade & Marca</button>
-    <button class="tab-trigger" onclick="alternarAba('tab-promocoes', this)">Promoções & Push</button>
-    <button class="tab-trigger" onclick="alternarAba('tab-fidelidade', this)">Catálogo de Prêmios</button>
-  </nav>
+  <div class="tabs-bar-container">
+    <nav class="tabs-bar">
+      <button class="tab-trigger active" onclick="alternarAba('tab-identidade', this)">Identidade & Marca</button>
+      <button class="tab-trigger" onclick="alternarAba('tab-promocoes', this)">Promoções & Push</button>
+      <button class="tab-trigger" onclick="alternarAba('tab-fidelidade', this)">Catálogo de Prêmios</button>
+    </nav>
+  </div>
 
   <main class="content-area">
     <!-- ABA 1: IDENTIDADE -->
@@ -495,7 +579,7 @@
           <div class="share-info">
             <span style="font-size:12px; font-weight:700; color:var(--muted);">Link direto do aplicativo:</span>
             <div class="pwa-url-label" id="pwa-url-text">---</div>
-            <button type="button" class="btn-submit" style="background:#f5f5f4; color:#1c1917; border:1px solid #d6d3d1; padding:9px 16px;" onclick="copiarLinkPwa()">
+            <button type="button" class="btn-submit" style="background:#f5f5f4; color:#1c1917; border:1px solid #d6d3d1; padding:9px 16px; width:auto;" onclick="copiarLinkPwa()">
               Copiar Link
             </button>
           </div>
@@ -505,9 +589,15 @@
       <div class="editor-grid">
         <div class="card">
           <div class="card-title">Configurações da Marca</div>
-          <div class="card-subtitle">Altere o nome fantasia, CNPJ, paleta de cores e logotipo.</div>
+          <div class="card-subtitle">Altere o nome fantasia, CNPJ, paleta de cores e o logotipo.</div>
 
           <form onsubmit="salvarIdentidade(event)">
+            <div class="form-group">
+              <label class="form-label">Nome de usuário do comércio (endereço fixo)</label>
+              <input type="text" id="loja-username-fixo" class="input-control" disabled>
+              <span style="font-size: 11px; color: var(--muted);">Este identificador foi definido no cadastro e é imutável para não quebrar o link dos clientes.</span>
+            </div>
+
             <div class="form-group">
               <label class="form-label">Nome Fantasia do Estabelecimento *</label>
               <input type="text" id="loja-nome" class="input-control" placeholder="Ex: Singelo Brigadeiro" required oninput="atualizarMockupNome(this.value)">
@@ -522,11 +612,11 @@
               <label class="form-label">Paleta de Cores</label>
               <div class="color-picker-grid">
                 <div class="color-item">
-                  <div class="color-circle" id="circ-header" style="background:#800000;">
-                    <input type="color" id="picker-header" class="color-input-hidden" value="#800000" oninput="sincronizarCor('header', this.value)">
+                  <div class="color-circle" id="circ-header" style="background:#ffffff;">
+                    <input type="color" id="picker-header" class="color-input-hidden" value="#ffffff" oninput="sincronizarCor('header', this.value)">
                   </div>
                   <span style="font-size:11px; font-weight:700;">Header</span>
-                  <input type="text" id="hex-header" class="color-hex" value="#800000" maxlength="7" oninput="sincronizarHex('header', this.value)">
+                  <input type="text" id="hex-header" class="color-hex" value="#FFFFFF" maxlength="7" oninput="sincronizarHex('header', this.value)">
                 </div>
 
                 <div class="color-item">
@@ -548,37 +638,39 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label">Logotipo (PNG, JPG ou WEBP)</label>
-              <div class="logo-container-row">
-                <div class="logo-current-thumb" id="thumb-logo-box">
+              <label class="form-label">Logotipo da Marca (PNG transparente recomendado)</label>
+              <div class="logo-upload-card">
+                <div class="logo-preview-box" id="thumb-logo-box">
                   <span style="font-size:24px;">🏪</span>
                 </div>
-                <div style="flex:1;">
-                  <input type="file" id="loja-logo" accept="image/*" class="input-control" onchange="processarLogo(event)">
-                  <span style="font-size:11px; color:var(--muted); display:block; margin-top:4px;" id="logo-status-label">
-                    Logo atual mantida. Selecione um novo arquivo se desejar substituir.
+                <div class="logo-details">
+                  <input type="file" id="loja-logo" accept="image/png, image/webp, image/jpeg" style="display: none;" onchange="processarLogo(event)">
+                  <button type="button" class="btn-select-file-custom" onclick="document.getElementById('loja-logo').click()">
+                    Escolher imagem
+                  </button>
+                  <span class="logo-status-txt" id="logo-status-label">
+                    Selecione seu logo em formato PNG com fundo transparente.
                   </span>
                 </div>
               </div>
             </div>
 
-            <button type="submit" class="btn-submit" id="btn-save-loja" style="width:100%; margin-top:10px;">
+            <button type="submit" class="btn-submit" id="btn-save-loja" style="margin-top:10px;">
               Salvar Alterações
             </button>
           </form>
         </div>
 
-        <!-- Live Preview Interativo -->
         <div class="mockup-sticky">
           <div style="font-size:12px; font-weight:700; color:var(--muted); text-align:center; margin-bottom:8px;">
             Prévia em Tempo Real do PWA
           </div>
 
           <div class="phone-frame">
-            <div class="mockup-header" id="mock-header" style="background-color: #800000;">
+            <div class="mockup-header" id="mock-header" style="background-color: #ffffff; color: #0f172a; border-bottom: 1px solid #e7e5e4;">
               <div class="mockup-logo-free" id="mock-logo-wrap"></div>
               <div class="mockup-titles">
-                <div id="mock-store-name">Singelo Brigadeiro</div>
+                <div id="mock-store-name">Singello</div>
                 <div id="mock-store-sub">Clube de Vantagens & Ofertas</div>
               </div>
             </div>
@@ -677,7 +769,7 @@
     let userIdAtual = null;
     let pwaClienteUrl = "";
 
-    let corHeader = '#800000';
+    let corHeader = '#ffffff';
     let corSec = '#ffffff';
     let corDest = '#b91c1c';
 
@@ -716,17 +808,18 @@
 
     function carregarLojaExistente(loja) {
       document.getElementById('top-slug-badge').innerText = `@${loja.slug}`;
+      document.getElementById('loja-username-fixo').value = `@${loja.slug}`;
       document.getElementById('loja-nome').value = loja.nome_fantasia || '';
       document.getElementById('loja-cnpj').value = loja.cnpj || '';
 
-      sincronizarCor('header', loja.cor_primaria || '#800000');
+      sincronizarCor('header', loja.cor_primaria || '#ffffff');
       sincronizarCor('sec', loja.cor_secundaria || '#ffffff');
       sincronizarCor('dest', loja.cor_destaque || '#b91c1c');
 
       if (loja.logo_url) {
         document.getElementById('mock-logo-wrap').innerHTML = `<img src="${loja.logo_url}" alt="Logo">`;
         document.getElementById('thumb-logo-box').innerHTML = `<img src="${loja.logo_url}" alt="Logo Salvo">`;
-        document.getElementById('logo-status-label').innerText = "Logotipo cadastrado. Envie outro arquivo apenas se desejar trocar.";
+        document.getElementById('logo-status-label').innerText = "Logotipo cadastrado com fundo transparente preservado.";
       }
       atualizarMockupNome(loja.nome_fantasia);
 
@@ -751,7 +844,9 @@
     }
 
     function carregarModoCriacao() {
-      document.getElementById('top-slug-badge').innerText = "Novo Estabelecimento";
+      const preSlug = sessionStorage.getItem('saas_pre_slug') || '';
+      document.getElementById('top-slug-badge').innerText = preSlug ? `@${preSlug}` : "Novo Estabelecimento";
+      document.getElementById('loja-username-fixo').value = preSlug ? `@${preSlug}` : "@seunegocio";
       document.getElementById('btn-save-loja').innerText = "Criar e Publicar App";
       document.getElementById('card-qrcode-divulgacao').style.display = 'none';
       document.getElementById('link-abrir-pwa').style.display = 'none';
@@ -798,10 +893,10 @@
     async function processarLogo(e) {
       const file = e.target.files[0];
       if (file) {
-        logoB64 = await comprimirImagemParaBase64(file, 600, 0.85);
+        logoB64 = await comprimirImagemParaBase64(file, 600);
         document.getElementById('mock-logo-wrap').innerHTML = `<img src="${logoB64}">`;
         document.getElementById('thumb-logo-box').innerHTML = `<img src="${logoB64}">`;
-        document.getElementById('logo-status-label').innerText = "Novo arquivo pronto para salvar.";
+        document.getElementById('logo-status-label').innerText = `${file.name} com fundo transparente pronto para salvar.`;
       }
     }
 
@@ -811,7 +906,6 @@
         .catch(() => prompt("Copie o link:", pwaClienteUrl));
     }
 
-    // Salva direto no Supabase sem erros de fetch
     async function salvarIdentidade(e) {
       e.preventDefault();
       const btn = document.getElementById('btn-save-loja');
@@ -827,13 +921,16 @@
       try {
         let logoFinalUrl = lojaAtual?.logo_url || '';
 
-        // Se uma nova imagem foi carregada, salva no storage
+        // Salva imagem em PNG no storage garantindo transparência nativa
         if (logoB64 && logoB64.startsWith('data:image')) {
           const base64Data = logoB64.replace(/^data:image\/\w+;base64,/, '');
           const bytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
           const fileName = `logos/${lojaAtual?.slug || 'loja'}_${Date.now()}.png`;
 
-          const { error: upErr } = await supabaseClient.storage.from('public-uploads').upload(fileName, bytes, { contentType: 'image/png', upsert: true });
+          const { error: upErr } = await supabaseClient.storage
+            .from('public-uploads')
+            .upload(fileName, bytes, { contentType: 'image/png', upsert: true });
+
           if (!upErr) {
             const { data: pubData } = supabaseClient.storage.from('public-uploads').getPublicUrl(fileName);
             logoFinalUrl = pubData.publicUrl;
@@ -841,12 +938,11 @@
         }
 
         if (!lojaAtual || !lojaAtual.id) {
-          // Criação inicial
-          const slugCalculado = nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-");
+          const slugReservado = sessionStorage.getItem('saas_pre_slug') || nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-");
 
           const { data: novo, error: insErr } = await supabaseClient.from('comercios').insert([{
             nome_fantasia: nome,
-            slug: slugCalculado,
+            slug: slugReservado,
             cnpj,
             cor_primaria: corHeader,
             cor_secundaria: corSec,
@@ -858,10 +954,10 @@
 
           if (insErr) throw insErr;
           lojaAtual = novo;
+          sessionStorage.removeItem('saas_pre_slug');
           alert("Aplicativo criado com sucesso!");
           window.location.reload();
         } else {
-          // Atualização da mesma loja mantendo slug e histórico de clientes
           const { data: atualizado, error: updErr } = await supabaseClient
             .from('comercios')
             .update({
@@ -892,7 +988,7 @@
 
     async function processarFotoPromo(e) {
       const f = e.target.files[0];
-      if (f) promoB64 = await comprimirImagemParaBase64(f, 800, 0.80);
+      if (f) promoB64 = await comprimirImagemParaBase64(f, 800);
     }
 
     async function carregarPromocoes() {
@@ -907,8 +1003,8 @@
           <div class="crud-card" id="promo-${p.id}">
             <div class="crud-card-left">
               <img class="crud-card-img" src="${p.imagem_url || 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=150&q=80'}">
-              <div>
-                <strong style="font-size:13px;">${p.titulo}</strong>
+              <div style="min-width:0;">
+                <strong style="font-size:13px; display:block; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${p.titulo}</strong>
                 <div style="font-size:11px; color:var(--muted);">${p.validade} • ${p.descricao}</div>
               </div>
             </div>
@@ -962,7 +1058,7 @@
 
     async function processarFotoPremio(e) {
       const f = e.target.files[0];
-      if (f) premioB64 = await comprimirImagemParaBase64(f, 600, 0.80);
+      if (f) premioB64 = await comprimirImagemParaBase64(f, 600);
     }
 
     async function carregarPremios() {
@@ -977,8 +1073,8 @@
           <div class="crud-card" id="premio-${p.id}">
             <div class="crud-card-left">
               <img class="crud-card-img" src="${p.imagem_url || 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=150&q=80'}">
-              <div>
-                <strong style="font-size:13px;">${p.titulo}</strong>
+              <div style="min-width:0;">
+                <strong style="font-size:13px; display:block; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${p.titulo}</strong>
                 <div style="font-size:11px; color:#b91c1c; font-weight:700;">${p.pontos} Pontos necessários</div>
               </div>
             </div>
