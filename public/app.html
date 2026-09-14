@@ -49,7 +49,7 @@
     .tab-view { display: none; }
     .tab-view.active { display: block; }
 
-    /* Header Elegante e Limpo */
+    /* Header com Logo Livre */
     .top-header {
       background: var(--cor-primaria) !important;
       padding: 24px 20px 32px 20px !important;
@@ -102,7 +102,7 @@
       position: relative;
     }
 
-    /* Área Flutuante sem sobreposição quebrada: desce suavemente na junção */
+    /* Camada Flutuante Entre Header e Body */
     .floating-stack-area {
       margin-top: -18px;
       margin-bottom: 22px;
@@ -113,11 +113,7 @@
       z-index: 30;
     }
 
-    /* Botão Flutuante de Push */
-    .btn-push-floating {
-      background: #ffffff;
-      color: var(--cor-destaque);
-      border: 1.5px solid var(--cor-borda);
+    .btn-pill-floating {
       border-radius: 9999px;
       padding: 13px 20px;
       font-size: 13px;
@@ -130,11 +126,23 @@
       box-shadow: 0 6px 18px rgba(0,0,0,0.08);
       width: 100%;
       transition: transform 0.15s ease, background-color 0.15s ease;
+      text-decoration: none;
     }
 
-    .btn-push-floating:active {
+    .btn-pill-floating:active {
       transform: scale(0.98);
-      background: #fdf2f2;
+    }
+
+    .btn-install-floating {
+      background: #ffffff;
+      color: #1c1917;
+      border: 1.5px solid var(--cor-borda);
+    }
+
+    .btn-push-floating {
+      background: #ffffff;
+      color: var(--cor-destaque);
+      border: 1.5px solid var(--cor-borda);
     }
 
     /* Banner Flutuante de CPF */
@@ -167,14 +175,16 @@
       text-decoration: underline;
     }
 
-    /* Títulos de Seção com Espaço Saudável */
+    /* Título das Seções com Margem Superior Dinâmica Blindada */
     .headline-bar-fixed {
       font-size: 18px !important;
       font-weight: 800 !important;
       color: var(--cor-texto) !important;
-      margin: 18px 4px 14px 4px !important;
+      margin-top: 18px !important;
+      margin-bottom: 16px !important;
       display: block !important;
       letter-spacing: -0.4px;
+      transition: margin-top 0.2s ease;
     }
 
     /* Cartão de Pontos */
@@ -311,6 +321,11 @@
       z-index: 1000; transform: translateY(100%); transition: transform 0.3s ease-out;
     }
     .ios-sheet.active { transform: translateY(0); }
+    .ios-step { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+    .ios-step-num {
+      background: #f1f5f9; color: #1c1917; font-weight: 800; font-size: 12px;
+      width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
   </style>
 
   <script src="js/api.js"></script>
@@ -329,27 +344,82 @@
           notifyButton: { enable: false }
         });
         await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
-        checarStatusPush();
-        OneSignal.User.PushSubscription.addEventListener("change", checarStatusPush);
+        atualizarBotoesFlutuantes();
+        OneSignal.User.PushSubscription.addEventListener("change", atualizarBotoesFlutuantes);
       } catch (e) {
         console.warn("OneSignal init aviso:", e);
       }
     });
 
-    function checarStatusPush() {
-      const btn = document.getElementById('btn-push-action');
-      if (!btn) return;
+    let deferredPrompt = null;
+    const isIos = () => /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+    const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      atualizarBotoesFlutuantes();
+    });
+
+    function atualizarBotoesFlutuantes() {
+      const btnInstall = document.getElementById('btn-install-action');
+      const btnPush = document.getElementById('btn-push-action');
+      const alertaCpf = document.getElementById('alerta-vincular');
+      const stackArea = document.querySelector('.floating-stack-area');
+      const titles = document.querySelectorAll('.headline-bar-fixed');
+
+      const standalone = isStandalone();
+
+      // 1. Regra do botão Instalar: aparece no navegador fora do modo standalone
+      if (!standalone) {
+        btnInstall.style.display = 'inline-flex';
+      } else {
+        btnInstall.style.display = 'none';
+      }
+
+      // 2. Regra do botão Push: aparece após instalado e enquanto não estiver inscrito
       const inscrito = window.OneSignal?.User?.PushSubscription?.optedIn ?? false;
       const permitido = ("Notification" in window) && Notification.permission === "granted";
-
-      // Aparece caso esteja instalado como app e ainda não tenha ativado
-      if (isStandalone && (!inscrito || !permitido)) {
-        btn.style.display = 'inline-flex';
+      if (standalone && (!inscrito || !permitido)) {
+        btnPush.style.display = 'inline-flex';
       } else {
-        btn.style.display = 'none';
+        btnPush.style.display = 'none';
       }
+
+      // 3. Ajuste de margem: se não houver nenhum botão flutuante ativo, aumenta a margem do título
+      const algumAtivo = (btnInstall.style.display !== 'none') || 
+                         (btnPush.style.display !== 'none') || 
+                         (alertaCpf.style.display === 'flex');
+
+      if (!algumAtivo) {
+        stackArea.style.marginBottom = '0px';
+        titles.forEach(t => t.style.setProperty('margin-top', '36px', 'important'));
+      } else {
+        stackArea.style.marginBottom = '22px';
+        titles.forEach(t => t.style.setProperty('margin-top', '18px', 'important'));
+      }
+    }
+
+    async function acionarInstalacao() {
+      if (isIos()) {
+        document.getElementById('iosOverlay').style.display = 'block';
+        setTimeout(() => document.getElementById('iosSheet').classList.add('active'), 10);
+      } else if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        if (outcome === 'accepted') {
+          document.getElementById('btn-install-action').style.display = 'none';
+          atualizarBotoesFlutuantes();
+        }
+      } else {
+        alert("Para instalar, abra o menu de configurações do navegador (três pontinhos) e selecione 'Adicionar à tela inicial' ou 'Instalar aplicativo'.");
+      }
+    }
+
+    function fecharModalIos() {
+      document.getElementById('iosSheet').classList.remove('active');
+      setTimeout(() => document.getElementById('iosOverlay').style.display = 'none', 300);
     }
 
     async function ativarPush() {
@@ -359,12 +429,12 @@
         btn.disabled = true;
       }
 
-      // Trava de segurança: se o navegador demorar mais de 6 segundos, restaura o botão
       const timeoutId = setTimeout(() => {
         if (btn && btn.disabled) {
           btn.innerText = "Receber avisos de promoções";
           btn.disabled = false;
           alert("Aguardando permissão no sistema. Se já permitiu, reabra o aplicativo.");
+          atualizarBotoesFlutuantes();
         }
       }, 6000);
 
@@ -374,17 +444,14 @@
         }
 
         if (Notification.permission === "denied") {
-          throw new Error("As notificações estão bloqueadas no seu navegador. Toque no cadeado da barra de endereço para permitir.");
+          throw new Error("As notificações estão bloqueadas nas configurações do aparelho ou navegador.");
         }
 
-        // Executa com garantia de promessa resolvida
         await new Promise((resolve, reject) => {
           window.OneSignalDeferred.push(async function(OneSignal) {
             try {
-              // Solicita permissão nativa
               await OneSignal.Notifications.requestPermission();
               await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
-              
               if (OneSignal.User.PushSubscription) {
                 await OneSignal.User.PushSubscription.optIn();
               }
@@ -397,7 +464,6 @@
 
         clearTimeout(timeoutId);
         alert("✅ Notificações ativadas com sucesso!");
-        checarStatusPush();
       } catch (err) {
         clearTimeout(timeoutId);
         alert(err.message || "Não foi possível ativar as notificações.");
@@ -406,14 +472,14 @@
           btn.innerText = "Receber avisos de promoções";
           btn.disabled = false;
         }
-        checarStatusPush();
+        atualizarBotoesFlutuantes();
       }
     }
   </script>
 </head>
 <body>
 
-  <!-- Top Header com Logo Livre -->
+  <!-- Header Livre -->
   <header class="top-header">
     <div class="clean-logo-wrap">
       <img class="dinamico-logo" src="" alt="Logo" style="display:none;" id="logo-img-header">
@@ -425,12 +491,19 @@
   </header>
 
   <div class="container-app-shield">
-    <!-- Camada Flutuante em fluxo limpo: fica sobreposta no rodapé do header sem cobrir logo ou texto -->
+    <!-- Camada Flutuante Entre o Header e o Conteúdo -->
     <div class="floating-stack-area">
-      <button id="btn-push-action" class="btn-push-floating" onclick="ativarPush()">
+      <!-- Botão 1: Instalar Aplicativo (quando acessado via navegador web) -->
+      <button id="btn-install-action" class="btn-pill-floating btn-install-floating" onclick="acionarInstalacao()">
+        Instalar aplicativo no celular
+      </button>
+
+      <!-- Botão 2: Receber Avisos (após instalado no modo PWA) -->
+      <button id="btn-push-action" class="btn-pill-floating btn-push-floating" onclick="ativarPush()">
         Receber avisos de promoções
       </button>
 
+      <!-- Card 3: Recuperação de CPF (na aba de Fidelidade) -->
       <div id="alerta-vincular" class="cpf-floating-card">
         <div class="cpf-floating-title">
           Vincule seu CPF para não perder seu saldo caso troque de celular.
@@ -478,14 +551,29 @@
     </a>
   </nav>
 
-  <!-- Modal Tutorial iPhone -->
+  <!-- Modal Tutorial iPhone (Safari) -->
   <div class="ios-overlay" id="iosOverlay" onclick="fecharModalIos()"></div>
   <div class="ios-sheet" id="iosSheet">
     <h3 style="font-size:16px; font-weight:800; text-align:center; margin-bottom:4px;">Instalar no iPhone</h3>
-    <p style="font-size:12px; color:var(--cor-subtexto); text-align:center; margin-bottom:18px;">Adicione o app à Tela de Início em dois passos:</p>
-    <div style="font-size:13px; margin-bottom:12px;">1. Na barra inferior do Safari, toque no botão <strong>Compartilhar</strong>.</div>
-    <div style="font-size:13px; margin-bottom:20px;">2. Role e toque em <strong>Adicionar à Tela de Início</strong>.</div>
-    <button style="width:100%; padding:12px; background:#1c1917; color:#fff; border:none; border-radius:12px; font-weight:700;" onclick="fecharModalIos()">Entendido</button>
+    <p style="font-size:12px; color:var(--cor-subtexto); text-align:center; margin-bottom:20px;">Siga os 2 passos abaixo no Safari:</p>
+    
+    <div class="ios-step">
+      <div class="ios-step-num">1</div>
+      <div style="font-size:13px; color:#1c1917; line-height:1.4;">
+        Na barra inferior do Safari, toque no ícone de <strong>Compartilhar</strong> (o quadrado com uma seta para cima).
+      </div>
+    </div>
+
+    <div class="ios-step">
+      <div class="ios-step-num">2</div>
+      <div style="font-size:13px; color:#1c1917; line-height:1.4;">
+        Role as opções e selecione <strong>Adicionar à Tela de Início</strong>.
+      </div>
+    </div>
+
+    <button style="width:100%; padding:13px; background:#1c1917; color:#fff; border:none; border-radius:12px; font-weight:700; margin-top:8px; cursor:pointer;" onclick="fecharModalIos()">
+      Entendido
+    </button>
   </div>
 
   <script>
@@ -505,11 +593,7 @@
       } else {
         alertaCpf.style.display = 'none';
       }
-    }
-
-    function fecharModalIos() {
-      document.getElementById('iosSheet').classList.remove('active');
-      setTimeout(() => document.getElementById('iosOverlay').style.display = 'none', 300);
+      atualizarBotoesFlutuantes();
     }
 
     async function carregarOfertas() {
@@ -542,6 +626,7 @@
         if (data.cpf) {
           usuarioTemCpfVinculado = true;
           document.getElementById('alerta-vincular').style.display = 'none';
+          atualizarBotoesFlutuantes();
         }
       } catch (e) { document.getElementById('user-pontos').innerHTML = `-- <span>pts</span>`; }
     }
@@ -588,6 +673,7 @@
         const data = await Api.vincularCpf(COMERCIO_SLUG, MEU_DEVICE_ID, limpo);
         usuarioTemCpfVinculado = true;
         document.getElementById('alerta-vincular').style.display = 'none';
+        atualizarBotoesFlutuantes();
         document.getElementById('user-pontos').innerHTML = `${data.pontos} <span>pts</span>`;
         alert("CPF vinculado com sucesso!");
       } catch (e) { alert("Erro: " + e.message); }
@@ -642,7 +728,7 @@
       await carregarOfertas();
       await carregarPontos();
       await carregarPremios();
-      checarStatusPush();
+      atualizarBotoesFlutuantes();
     })();
   </script>
 </body>
