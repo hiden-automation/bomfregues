@@ -320,14 +320,20 @@
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function(OneSignal) {
-      await OneSignal.init({
-        appId: "3848f19b-f5ef-45a5-a307-ad0a89725eb1",
-        welcomeNotification: { disable: true },
-        notifyButton: { enable: false }
-      });
-      await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
-      checarStatusPush();
-      OneSignal.User.PushSubscription.addEventListener("change", checarStatusPush);
+      try {
+        await OneSignal.init({
+          appId: "3848f19b-f5ef-45a5-a307-ad0a89725eb1",
+          serviceWorkerParam: { scope: "/" },
+          serviceWorkerPath: "OneSignalSDKWorker.js",
+          welcomeNotification: { disable: true },
+          notifyButton: { enable: false }
+        });
+        await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
+        checarStatusPush();
+        OneSignal.User.PushSubscription.addEventListener("change", checarStatusPush);
+      } catch (e) {
+        console.warn("OneSignal init aviso:", e);
+      }
     });
 
     function checarStatusPush() {
@@ -338,7 +344,7 @@
       const inscrito = window.OneSignal?.User?.PushSubscription?.optedIn ?? false;
       const permitido = ("Notification" in window) && Notification.permission === "granted";
 
-      // Aparece caso esteja no app instalado e ainda não tenha ativado
+      // Aparece caso esteja instalado como app e ainda não tenha ativado
       if (isStandalone && (!inscrito || !permitido)) {
         btn.style.display = 'inline-flex';
       } else {
@@ -348,35 +354,59 @@
 
     async function ativarPush() {
       const btn = document.getElementById('btn-push-action');
-      if (btn) btn.innerText = "Ativando...";
+      if (btn) {
+        btn.innerText = "Solicitando permissão...";
+        btn.disabled = true;
+      }
+
+      // Trava de segurança: se o navegador demorar mais de 6 segundos, restaura o botão
+      const timeoutId = setTimeout(() => {
+        if (btn && btn.disabled) {
+          btn.innerText = "Receber avisos de promoções";
+          btn.disabled = false;
+          alert("Aguardando permissão no sistema. Se já permitiu, reabra o aplicativo.");
+        }
+      }, 6000);
 
       try {
-        // 1. Solicitação no navegador
-        if ("Notification" in window) {
-          const perm = await Notification.requestPermission();
-          if (perm === "denied") {
-            alert("As notificações estão bloqueadas nas configurações do seu navegador. Toque no ícone de cadeado ou configurações do site para permitir.");
-            if (btn) btn.innerText = "Receber avisos de promoções";
-            return;
-          }
+        if (!("Notification" in window)) {
+          throw new Error("Este dispositivo não suporta notificações web.");
         }
 
-        // 2. Aciona o OneSignal
-        window.OneSignalDeferred.push(async function(OneSignal) {
-          try {
-            await OneSignal.Notifications.requestPermission();
-            await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
-            await OneSignal.User.PushSubscription.optIn();
-            alert("✅ Notificações ativadas com sucesso!");
-            checarStatusPush();
-          } catch (e) {
-            console.warn("OneSignal optIn info:", e);
-            checarStatusPush();
-          }
+        if (Notification.permission === "denied") {
+          throw new Error("As notificações estão bloqueadas no seu navegador. Toque no cadeado da barra de endereço para permitir.");
+        }
+
+        // Executa com garantia de promessa resolvida
+        await new Promise((resolve, reject) => {
+          window.OneSignalDeferred.push(async function(OneSignal) {
+            try {
+              // Solicita permissão nativa
+              await OneSignal.Notifications.requestPermission();
+              await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
+              
+              if (OneSignal.User.PushSubscription) {
+                await OneSignal.User.PushSubscription.optIn();
+              }
+              resolve();
+            } catch (err) {
+              reject(err);
+            }
+          });
         });
+
+        clearTimeout(timeoutId);
+        alert("✅ Notificações ativadas com sucesso!");
+        checarStatusPush();
       } catch (err) {
-        alert("Não foi possível ativar as notificações: " + err.message);
-        if (btn) btn.innerText = "Receber avisos de promoções";
+        clearTimeout(timeoutId);
+        alert(err.message || "Não foi possível ativar as notificações.");
+      } finally {
+        if (btn) {
+          btn.innerText = "Receber avisos de promoções";
+          btn.disabled = false;
+        }
+        checarStatusPush();
       }
     }
   </script>
@@ -403,7 +433,7 @@
 
       <div id="alerta-vincular" class="cpf-floating-card">
         <div class="cpf-floating-title">
-          Seus pontos estão salvos neste aparelho. Vincule seu CPF para não perder seu saldo caso troque de celular.
+          Vincule seu CPF para não perder seu saldo caso troque de celular.
         </div>
         <button class="cpf-floating-action" onclick="vincularCpfModal()">Vincular meu CPF agora</button>
       </div>
