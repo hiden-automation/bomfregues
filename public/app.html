@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#ffffff">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/global.css">
@@ -21,21 +21,44 @@
       --cor-texto-header: #ffffff;
       --cor-subtexto-header: rgba(255,255,255,0.85);
       --borda-header: none;
+      --cor-primaria: #000000;
+      --cor-secundaria: #ffffff;
+      --cor-destaque: #b91c1c;
+      --cor-fundo: #f8fafc;
+      --cor-texto: #1c1917;
+      --cor-subtexto: #78716c;
+      --cor-borda: #e7e5e4;
     }
 
-    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; 
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--cor-fundo);
+      color: var(--cor-texto);
+      min-height: 100vh;
+      padding-bottom: 90px;
+    }
+
     .tab-view { display: none; }
     .tab-view.active { display: block; }
 
-    /* Header com Logo Livre e Transparência total */
+    /* Header com Logo Livre */
     .top-header {
       background: var(--cor-primaria) !important;
-      padding: 24px 20px 24px 20px;
-      border-radius: 0 0 24px 24px;
+      padding: 24px 20px 36px 20px;
+      border-radius: 0 0 28px 28px;
       display: flex;
       align-items: center;
       border-bottom: var(--borda-header);
       box-shadow: none !important;
+      position: relative;
+      z-index: 10;
     }
 
     .clean-logo-wrap {
@@ -47,8 +70,6 @@
       flex-shrink: 0;
       background: transparent !important;
       border: none !important;
-      box-shadow: none !important;
-      border-radius: 0 !important;
     }
 
     .clean-logo-wrap img {
@@ -69,53 +90,102 @@
     .header-sub-clean { 
       font-size: 11px; 
       color: var(--cor-subtexto-header) !important; 
-      margin-top: 2px; 
+      margin-top: 3px; 
     }
 
-    .pwa-actions-wrapper {
-      margin-bottom: 16px;
+    /* Container Principal com Margens Alinhadas */
+    .container-app {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 16px;
+      position: relative;
+    }
+
+    /* Zona Flutuante Entre o Header e o Body */
+    .floating-layer-container {
+      margin-top: -20px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 20;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .btn-action-clean {
-      width: 100%;
-      padding: 12px 16px;
-      border-radius: 12px;
+    /* Botão Flutuante de Notificação Push */
+    .btn-push-floating {
+      background: #ffffff;
+      color: var(--cor-destaque);
+      border: 1.5px solid var(--cor-borda);
+      border-radius: 9999px;
+      padding: 12px 20px;
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
-      border: none;
+      gap: 8px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      width: 100%;
+      transition: transform 0.15s ease;
     }
 
-    .btn-install {
+    .btn-push-floating:active {
+      transform: scale(0.98);
+    }
+
+    /* Banner Flutuante de CPF */
+    .cpf-floating-card {
       background: #ffffff;
-      color: #0f172a;
-      border: 1.5px solid #e2e8f0;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+      border: 1.5px solid var(--cor-borda);
+      border-radius: 18px;
+      padding: 14px 18px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
-    .btn-push {
-      background: var(--cor-destaque);
-      color: #ffffff;
+    .cpf-floating-title {
+      font-size: 12px;
+      color: var(--cor-subtexto);
+      line-height: 1.4;
     }
 
+    .cpf-floating-action {
+      background: none;
+      border: none;
+      color: var(--cor-destaque);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: left;
+      padding: 2px 0 0 0;
+      text-decoration: underline;
+    }
+
+    /* Título das Seções com Margem Correta */
+    .headline-bar {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--cor-texto);
+      margin: 18px 4px 14px;
+    }
+
+    /* Cartão de Pontos */
     .points-hub-card {
       background: #ffffff;
       border: 1px solid var(--cor-borda);
-      border-radius: 20px;
+      border-radius: 24px;
       padding: 24px 20px;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     }
 
     .points-total {
-      font-size: 50px;
+      font-size: 52px;
       font-weight: 800;
       color: var(--cor-texto);
       line-height: 1;
@@ -137,7 +207,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin: 6px 0 20px;
+      margin: 8px 0 22px;
     }
 
     .btn-scan-trigger {
@@ -145,8 +215,8 @@
       background: var(--cor-destaque);
       color: #ffffff;
       border: none;
-      border-radius: 12px;
-      padding: 13px;
+      border-radius: 14px;
+      padding: 14px;
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
@@ -163,52 +233,25 @@
 
     #reader video { width: 100% !important; object-fit: cover !important; }
 
-    .cpf-box-clean {
-      background: var(--cor-secundaria);
-      border: 1px solid var(--cor-destaque);
-      border-radius: 12px;
-      padding: 12px 16px;
-      margin-bottom: 16px;
-      font-size: 12px;
-      line-height: 1.4;
-      color: var(--cor-texto);
-    }
-
-    .cpf-box-clean button {
-      background: none;
-      border: none;
-      color: var(--cor-destaque);
-      font-weight: 700;
-      text-decoration: underline;
-      cursor: pointer;
-      display: block;
-      margin-top: 4px;
-    }
-
-    .headline-bar {
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--cor-texto);
-      margin: 22px 2px 12px;
-    }
-
+    /* Vitrines */
     .showcase-card {
       background: #ffffff;
-      border-radius: 16px;
+      border-radius: 20px;
       overflow: hidden;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       border: 1px solid var(--cor-borda);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
     }
 
     .showcase-media {
       width: 100%;
-      height: 170px;
+      height: 180px;
       object-fit: cover;
       display: block;
       background: #f1f5f9;
     }
 
-    .showcase-info { padding: 16px; }
+    .showcase-info { padding: 18px; }
 
     .showcase-badge {
       display: inline-block;
@@ -216,22 +259,22 @@
       color: var(--cor-destaque);
       font-size: 10px;
       font-weight: 800;
-      padding: 3px 8px;
+      padding: 4px 8px;
       border-radius: 6px;
       text-transform: uppercase;
       margin-bottom: 8px;
       border: 1px solid rgba(0,0,0,0.06);
     }
 
-    .showcase-title { font-size: 16px; font-weight: 800; color: var(--cor-texto); margin-bottom: 4px; }
-    .showcase-desc { font-size: 12px; color: var(--cor-subtexto); line-height: 1.4; margin-bottom: 10px; }
+    .showcase-title { font-size: 16px; font-weight: 800; color: var(--cor-texto); margin-bottom: 6px; line-height: 1.3; }
+    .showcase-desc { font-size: 13px; color: var(--cor-subtexto); line-height: 1.4; margin-bottom: 12px; }
 
     .showcase-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-top: 12px;
-      padding-top: 10px;
+      padding-top: 12px;
       border-top: 1px solid #f1f5f9;
     }
 
@@ -240,8 +283,8 @@
       font-weight: 800;
       color: var(--cor-destaque);
       background: var(--cor-secundaria);
-      padding: 5px 10px;
-      border-radius: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
       border: 1px solid rgba(0,0,0,0.06);
     }
 
@@ -249,17 +292,18 @@
       background: var(--cor-primaria);
       color: var(--cor-texto-header);
       border: 1px solid rgba(0,0,0,0.1);
-      padding: 8px 16px;
-      border-radius: 8px;
+      padding: 9px 18px;
+      border-radius: 10px;
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
     }
 
+    /* Modal Tutorial iOS */
     .ios-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
     .ios-sheet {
       position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff;
-      border-radius: 20px 20px 0 0; padding: 26px 20px 32px; max-width: 440px; margin: 0 auto;
+      border-radius: 24px 24px 0 0; padding: 26px 20px 32px; max-width: 440px; margin: 0 auto;
       z-index: 1000; transform: translateY(100%); transition: transform 0.3s ease-out;
     }
     .ios-sheet.active { transform: translateY(0); }
@@ -281,9 +325,17 @@
     function checarStatusPush() {
       const btn = document.getElementById('btn-push-action');
       if (!btn) return;
+      
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
       const inscrito = window.OneSignal?.User?.PushSubscription?.optedIn ?? false;
       const permitido = ("Notification" in window) && Notification.permission === "granted";
-      btn.style.display = (inscrito && permitido) ? 'none' : 'block';
+      
+      // O botão de notificações só aparece após o usuário instalar o PWA no celular e caso ainda não tenha ativado
+      if (isStandalone && (!inscrito || !permitido)) {
+        btn.style.display = 'inline-flex';
+      } else {
+        btn.style.display = 'none';
+      }
     }
 
     async function ativarPush() {
@@ -301,6 +353,7 @@
 </head>
 <body>
 
+  <!-- Header Livre com Cores e Logo -->
   <header class="top-header">
     <div class="clean-logo-wrap">
       <img class="dinamico-logo" src="" alt="Logo" style="display:none;" id="logo-img-header">
@@ -311,30 +364,31 @@
     </div>
   </header>
 
-  <div class="container">
-    <div class="pwa-actions-wrapper">
-      <button id="btn-install-action" class="btn-action-clean btn-install" onclick="acionarInstalacao()">
-        Instalar Aplicativo no Celular
+  <div class="container-app">
+    <!-- Camada Flutuante Entre Header e Body -->
+    <div class="floating-layer-container">
+      <!-- Botão Flutuante de Push (aparece após a instalação) -->
+      <button id="btn-push-action" class="btn-push-floating" onclick="ativarPush()">
+        Receber avisos de promoções
       </button>
 
-      <button id="btn-push-action" class="btn-action-clean btn-push" onclick="ativarPush()" style="display:none;">
-        Receber Avisos de Promoções
-      </button>
+      <!-- Banner Flutuante de CPF (somente na aba de fidelidade) -->
+      <div id="alerta-vincular" class="cpf-floating-card" style="display:none;">
+        <div class="cpf-floating-title">
+          Seus pontos estão salvos neste aparelho. Vincule seu CPF para recuperar seu saldo caso troque de celular.
+        </div>
+        <button class="cpf-floating-action" onclick="vincularCpfModal()">Vincular meu CPF agora</button>
+      </div>
     </div>
 
-    <!-- Ofertas -->
+    <!-- ABA 1: Ofertas -->
     <div id="view-promos" class="tab-view active">
       <div class="headline-bar">Ofertas da Loja</div>
       <div id="lista-promos">Carregando ofertas...</div>
     </div>
 
-    <!-- Fidelidade -->
+    <!-- ABA 2: Fidelidade -->
     <div id="view-fidelidade" class="tab-view">
-      <div id="alerta-vincular" class="cpf-box-clean">
-        Seus pontos estão salvos apenas neste aparelho. Vincule seu CPF para recuperar seu saldo caso troque de celular.
-        <button onclick="vincularCpfModal()">Vincular CPF</button>
-      </div>
-
       <div class="points-hub-card">
         <div class="points-total" id="user-pontos">-- <span>pts</span></div>
         <div class="points-label-sub">Saldo Disponível</div>
@@ -345,7 +399,7 @@
 
         <div id="reader-container">
           <div id="reader"></div>
-          <button class="btn-action-clean btn-install" style="margin-top:10px;" onclick="pararScanner()">Cancelar Leitura</button>
+          <button style="margin-top:12px; width:100%; padding:10px; background:#fff; border:1px solid var(--cor-borda); border-radius:10px; font-weight:700;" onclick="pararScanner()">Cancelar Leitura</button>
         </div>
       </div>
 
@@ -354,6 +408,7 @@
     </div>
   </div>
 
+  <!-- Bottom Navigation -->
   <nav class="bottom-nav">
     <a class="nav-item active" id="nav-btn-promos" onclick="navegarAba('view-promos', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
@@ -365,46 +420,33 @@
     </a>
   </nav>
 
+  <!-- Modal Tutorial iPhone Safari -->
   <div class="ios-overlay" id="iosOverlay" onclick="fecharModalIos()"></div>
   <div class="ios-sheet" id="iosSheet">
     <h3 style="font-size:16px; font-weight:800; text-align:center; margin-bottom:4px;">Instalar no iPhone</h3>
     <p style="font-size:12px; color:var(--cor-subtexto); text-align:center; margin-bottom:18px;">Adicione o app à Tela de Início em dois passos:</p>
     <div style="font-size:13px; margin-bottom:12px;">1. Na barra inferior do Safari, toque no botão <strong>Compartilhar</strong>.</div>
     <div style="font-size:13px; margin-bottom:20px;">2. Role e toque em <strong>Adicionar à Tela de Início</strong>.</div>
-    <button class="btn-action-clean btn-install" onclick="fecharModalIos()">Entendido</button>
+    <button style="width:100%; padding:12px; background:#1c1917; color:#fff; border:none; border-radius:12px; font-weight:700;" onclick="fecharModalIos()">Entendido</button>
   </div>
 
   <script>
     const FOTO_PADRAO = "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=500&q=80";
     let html5QrcodeScanner = null;
+    let usuarioTemCpfVinculado = false;
 
     function navegarAba(viewId, btn) {
       document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById(viewId).classList.add('active');
-    }
 
-    const isIos = () => /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    const btnInstall = document.getElementById('btn-install-action');
-
-    if (isStandalone) btnInstall.style.display = 'none';
-
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
-
-    async function acionarInstalacao() {
-      if (isIos()) {
-        document.getElementById('iosOverlay').style.display = 'block';
-        setTimeout(() => document.getElementById('iosSheet').classList.add('active'), 10);
-      } else if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        if (outcome === 'accepted') btnInstall.style.display = 'none';
+      // Controla a exibição do alerta de CPF apenas na aba de fidelidade
+      const alertaCpf = document.getElementById('alerta-vincular');
+      if (viewId === 'view-fidelidade' && !usuarioTemCpfVinculado) {
+        alertaCpf.style.display = 'flex';
       } else {
-        alert("Toque no menu do navegador e selecione 'Adicionar à tela inicial'.");
+        alertaCpf.style.display = 'none';
       }
     }
 
@@ -418,7 +460,7 @@
       try {
         const promocoes = await Api.listarPromocoes(COMERCIO_SLUG);
         if (!promocoes.length) {
-          box.innerHTML = `<div class="showcase-card" style="padding:24px; text-align:center; font-size:13px; color:var(--cor-subtexto);">Nenhuma promoção ativa no momento.</div>`;
+          box.innerHTML = `<div class="showcase-card" style="padding:28px; text-align:center; font-size:13px; color:var(--cor-subtexto);">Nenhuma promoção ativa no momento.</div>`;
           return;
         }
 
@@ -440,7 +482,10 @@
       try {
         const data = await Api.obterPontos(COMERCIO_SLUG, MEU_DEVICE_ID);
         document.getElementById('user-pontos').innerHTML = `${data.pontos} <span>pts</span>`;
-        if (data.cpf) document.getElementById('alerta-vincular').style.display = 'none';
+        if (data.cpf) {
+          usuarioTemCpfVinculado = true;
+          document.getElementById('alerta-vincular').style.display = 'none';
+        }
       } catch (e) { document.getElementById('user-pontos').innerHTML = `-- <span>pts</span>`; }
     }
 
@@ -449,7 +494,7 @@
       try {
         const premios = await Api.listarPremios(COMERCIO_SLUG);
         if (!premios.length) {
-          box.innerHTML = `<div class="showcase-card" style="padding:24px; text-align:center; font-size:13px; color:var(--cor-subtexto);">Nenhum prêmio cadastrado.</div>`;
+          box.innerHTML = `<div class="showcase-card" style="padding:28px; text-align:center; font-size:13px; color:var(--cor-subtexto);">Nenhum prêmio cadastrado.</div>`;
           return;
         }
 
@@ -484,6 +529,7 @@
       if (limpo.length !== 11) return alert("CPF inválido.");
       try {
         const data = await Api.vincularCpf(COMERCIO_SLUG, MEU_DEVICE_ID, limpo);
+        usuarioTemCpfVinculado = true;
         document.getElementById('alerta-vincular').style.display = 'none';
         document.getElementById('user-pontos').innerHTML = `${data.pontos} <span>pts</span>`;
         alert("CPF vinculado com sucesso!");
@@ -539,6 +585,7 @@
       await carregarOfertas();
       await carregarPontos();
       await carregarPremios();
+      checarStatusPush();
     })();
   </script>
 </body>

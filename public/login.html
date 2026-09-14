@@ -6,7 +6,7 @@
   <title>Entrar — Bom Freguês</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -14,21 +14,35 @@
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-    body { min-height: 100vh; display: flex; background: #ffffff; color: #171717; }
-    .split-layout { display: flex; width: 100%; min-height: 100vh; }
+    body { min-height: 100vh; min-height: 100dvh; display: flex; background: #ffffff; color: #171717; }
+    .split-layout { display: flex; width: 100%; min-height: 100vh; min-height: 100dvh; }
 
     .left-panel {
       flex: 1; background: #171412; color: #ffffff; padding: 48px 56px;
       display: flex; flex-direction: column; justify-content: space-between;
     }
     .brand-logo-white { font-family: 'DM Serif Display', Georgia, serif; font-size: 28px; color: #ffffff; text-decoration: none; }
-    .brand-logo-white span { color: #ea580c; }
+    .brand-dot { color: #ea580c; }
     .quote-text { font-family: 'DM Serif Display', Georgia, serif; font-style: italic; font-size: 32px; line-height: 1.28; color: #f5f5f4; margin-bottom: 20px; }
 
-    .right-panel { flex: 1.15; background: #ffffff; display: flex; align-items: center; justify-content: center; padding: 40px 32px; }
+    .mobile-brand-header {
+      display: none;
+    }
+
+    .right-panel {
+      flex: 1.15;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 32px;
+      position: relative;
+    }
+
     .auth-box { width: 100%; max-width: 440px; }
-    .auth-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 40px; color: #111827; margin-bottom: 8px; }
-    .auth-sub { font-size: 14px; color: #64748b; margin-bottom: 28px; }
+
+    .auth-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 36px; color: #111827; margin-bottom: 8px; line-height: 1.15; }
+    .auth-sub { font-size: 14px; color: #64748b; line-height: 1.4; margin-bottom: 28px; }
 
     .form-group { margin-bottom: 18px; }
     .form-group label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 8px; }
@@ -74,9 +88,32 @@
     .toggle-auth-mode a { color: #171717; font-weight: 700; cursor: pointer; }
     .msg-box { display: none; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 600; margin-bottom: 16px; text-align: center; }
 
+    /* Ajuste mobile: logo fixa no topo e conteúdo centralizado no viewport */
     @media (max-width: 900px) {
       .left-panel { display: none; }
-      .right-panel { padding: 40px 20px; }
+      .right-panel {
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding: 80px 24px 32px 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .mobile-brand-header {
+        display: block;
+        position: absolute;
+        top: 24px;
+        left: 24px;
+      }
+      .mobile-brand-header .brand-logo-white {
+        font-size: 24px;
+        color: #111827;
+      }
+      .auth-box {
+        margin: auto 0;
+      }
+      .auth-title { font-size: 32px; }
     }
   </style>
 </head>
@@ -84,7 +121,7 @@
 
   <div class="split-layout">
     <div class="left-panel">
-      <a href="index.html" class="brand-logo-white">Bom Freguês<span>.</span></a>
+      <a href="index.html" class="brand-logo-white">Bom Freguês<span class="brand-dot">.</span></a>
       <div>
         <p class="quote-text">"A melhor forma de transformar clientes em fãs é valorizando quem sempre volta."</p>
         <p style="color:#a8a29e; font-size:14px;">Criado para comércios que prezam pela proximidade.</p>
@@ -93,6 +130,10 @@
     </div>
 
     <div class="right-panel">
+      <div class="mobile-brand-header">
+        <a href="index.html" class="brand-logo-white">Bom Freguês<span class="brand-dot">.</span></a>
+      </div>
+
       <div class="auth-box">
         <h1 class="auth-title" id="auth-title-text">Bem-vindo(a) de volta</h1>
         <p class="auth-sub" id="auth-sub-text">Entre para gerenciar o programa de fidelidade do seu comércio.</p>
@@ -100,7 +141,6 @@
         <div id="auth-msg" class="msg-box"></div>
 
         <form onsubmit="executarAutenticacao(event)">
-          <!-- Campo exclusivo do modo de cadastro -->
           <div class="form-group" id="group-username" style="display: none;">
             <label>Nome de usuário do comércio (endereço do seu app)</label>
             <div class="username-input-wrapper">
@@ -197,7 +237,7 @@
             usernameValidoEDisponivel = true;
           } else {
             feedback.style.color = "#dc2626";
-            feedback.innerText = `✕ @${slugLimpo} já está em uso por outro comércio. Escolha outro.`;
+            feedback.innerText = `✕ @${slugLimpo} já está em uso por outro comércio.`;
             usernameValidoEDisponivel = false;
           }
         } catch (e) {
@@ -263,7 +303,6 @@
             return;
           }
 
-          // Armazena o slug reservado para o setup imediato
           sessionStorage.setItem('saas_pre_slug', slugFinal);
         } else {
           const res = await Api.loginUsuario(email, password);
@@ -286,7 +325,6 @@
           console.warn("Loja não encontrada:", lojaErr);
         }
 
-        // Se tiver reservado o slug no cadastro, envia junto na URL do admin
         if (slugFinal) {
           window.location.href = `admin.html?loja=${slugFinal}`;
         } else {

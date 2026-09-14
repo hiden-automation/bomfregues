@@ -6,8 +6,8 @@
   <title>Painel do Estabelecimento — Bom Freguês</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -34,15 +34,20 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+
     body { 
       background: var(--bg); 
       color: var(--text); 
       min-height: 100vh; 
       display: flex; 
       flex-direction: column; 
-      overflow-x: hidden;
     }
 
+    /* Top Nav */
     .top-nav {
       background: #ffffff;
       border-bottom: 1px solid var(--border);
@@ -50,7 +55,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 32px;
+      padding: 0 24px;
       position: sticky;
       top: 0;
       z-index: 50;
@@ -63,11 +68,16 @@
       gap: 12px;
     }
 
-    .brand-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: #1c1917;
-      letter-spacing: -0.3px;
+    .brand-logo-official {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 22px;
+      color: #111;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-dot {
+      color: #ea580c;
     }
 
     .store-badge {
@@ -75,9 +85,9 @@
       font-weight: 700;
       color: #78716c;
       background: #f5f5f4;
-      padding: 4px 10px;
+      padding: 4px 8px;
       border-radius: 6px;
-      max-width: 160px;
+      max-width: 140px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -108,12 +118,13 @@
       color: #dc2626;
       font-size: 12px;
       font-weight: 700;
-      padding: 7px 12px;
+      padding: 6px 12px;
       border-radius: 8px;
       cursor: pointer;
       white-space: nowrap;
     }
 
+    /* Abas */
     .tabs-bar-container {
       width: 100%;
       border-bottom: 1px solid var(--border);
@@ -123,7 +134,7 @@
     .tabs-bar {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 24px;
+      padding: 0 16px;
       display: flex;
       gap: 8px;
       overflow-x: auto;
@@ -151,20 +162,22 @@
     .tab-trigger:hover { color: var(--text); }
     .tab-trigger.active { color: #1c1917; border-bottom-color: #1c1917; }
 
+    /* Conteúdo Principal */
     .content-area {
       max-width: 1200px;
       width: 100%;
       margin: 24px auto 60px;
-      padding: 0 24px;
+      padding: 0 16px;
       flex: 1;
     }
 
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
+    /* Grid de Split para PC (1.15fr Formulário / 0.85fr Prévia ou Lista) */
     .editor-grid {
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
+      grid-template-columns: 1fr 1fr;
       gap: 32px;
       align-items: start;
     }
@@ -176,6 +189,8 @@
       padding: 24px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.02);
       margin-bottom: 24px;
+      width: 100%;
+      overflow: hidden;
     }
 
     .card-title {
@@ -197,6 +212,7 @@
       flex-direction: column;
       gap: 6px;
       margin-bottom: 18px;
+      width: 100%;
     }
 
     .form-label {
@@ -228,27 +244,38 @@
       cursor: not-allowed;
     }
 
+    .form-help-text {
+      font-size: 11px;
+      color: var(--muted);
+      word-break: break-word;
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    /* Cores */
     .color-picker-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      gap: 8px;
       margin-top: 4px;
+      width: 100%;
     }
 
     .color-item {
       border: 1px solid var(--border);
       background: #fafaf9;
       border-radius: 12px;
-      padding: 10px 8px;
+      padding: 10px 4px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      min-width: 0;
     }
 
     .color-circle {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       border: 3px solid #ffffff;
       box-shadow: 0 2px 6px rgba(0,0,0,0.12);
@@ -267,85 +294,87 @@
 
     .color-hex {
       width: 100%;
-      max-width: 76px;
+      max-width: 72px;
       font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
       text-align: center;
       border: 1px solid #d6d3d1;
       border-radius: 6px;
-      padding: 4px;
+      padding: 3px 2px;
       background: #fff;
     }
 
-    /* Container de Upload de Logo Transparente */
-    .logo-upload-card {
+    /* Componente Padronizado de Upload de Imagem */
+    .custom-upload-card {
       border: 1.5px dashed #cbd5e1;
       background: #fafaf9;
       border-radius: 14px;
-      padding: 16px;
+      padding: 14px;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
+      width: 100%;
       transition: border-color 0.2s, background 0.2s;
     }
 
-    .logo-upload-card:hover {
+    .custom-upload-card:hover {
       border-color: #94a3b8;
       background: #f8fafc;
     }
 
-    .logo-preview-box {
-      width: 58px;
-      height: 58px;
+    .custom-upload-thumb {
+      width: 52px;
+      height: 52px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      background: transparent !important;
-      border: none !important;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
       overflow: hidden;
+      padding: 4px;
     }
 
-    .logo-preview-box img {
+    .custom-upload-thumb img {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
     }
 
-    .logo-details {
+    .custom-upload-details {
       flex: 1;
       min-width: 0;
     }
 
-    .btn-select-file-custom {
+    .btn-choose-file {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       background: #ffffff;
       border: 1.5px solid #d6d3d1;
       color: #1c1917;
-      padding: 7px 14px;
+      padding: 7px 12px;
       border-radius: 8px;
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.15s;
+      white-space: nowrap;
     }
 
-    .btn-select-file-custom:hover {
+    .btn-choose-file:hover {
       background: #f5f5f4;
       border-color: #a8a29e;
     }
 
-    .logo-status-txt {
+    .custom-upload-status {
       font-size: 11px;
       color: var(--muted);
-      margin-top: 5px;
+      margin-top: 4px;
       display: block;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      word-break: break-word;
+      line-height: 1.3;
     }
 
     .btn-submit {
@@ -360,7 +389,6 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
       width: 100%;
     }
 
@@ -372,44 +400,46 @@
     /* Mockup */
     .mockup-sticky {
       position: sticky;
-      top: 96px;
+      top: 88px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .phone-frame {
-      max-width: 330px;
+      width: 100%;
+      max-width: 320px;
       margin: 0 auto;
       background: #ffffff;
       border: 8px solid #1c1917;
       border-radius: 36px;
       overflow: hidden;
-      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.12);
-      min-height: 480px;
+      box-shadow: 0 14px 30px -8px rgba(0,0,0,0.12);
+      min-height: 440px;
       display: flex;
       flex-direction: column;
     }
 
     .mockup-header {
-      padding: 24px 18px 20px;
+      padding: 22px 16px 18px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       transition: background-color 0.2s ease, color 0.2s ease;
       background-color: #ffffff;
       color: #0f172a;
     }
 
-    /* Logo livre e transparente sem fundo */
     .mockup-logo-free {
-      width: 50px;
-      height: 50px;
+      width: 46px;
+      height: 46px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
       background: transparent !important;
       border: none !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
     }
 
     .mockup-logo-free img {
@@ -420,21 +450,21 @@
     }
 
     .mockup-titles div:first-child { 
-      font-size: 15px; 
+      font-size: 14px; 
       font-weight: 800; 
       line-height: 1.2;
       color: inherit;
     }
 
     .mockup-titles div:last-child { 
-      font-size: 11px; 
+      font-size: 10px; 
       margin-top: 2px;
       color: inherit;
       opacity: 0.85;
     }
 
     .mockup-body {
-      padding: 16px;
+      padding: 14px;
       background: #fafaf9;
       flex: 1;
       display: flex;
@@ -446,25 +476,96 @@
       background: #ffffff;
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 16px;
+      padding: 14px;
       text-align: center;
     }
 
     .mockup-balance-number {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 800;
       color: #1c1917;
     }
 
+    /* Cartões de Publicados no Estilo PWA */
+    .pwa-style-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+
+    .pwa-card-media {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+      background: #f1f5f9;
+    }
+
+    .pwa-card-body {
+      padding: 16px;
+    }
+
+    .pwa-card-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .pwa-card-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .pwa-card-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .pwa-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 10px;
+    }
+
+    .btn-delete-clean {
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      color: #dc2626;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-delete-clean:hover {
+      background: #fee2e2;
+    }
+
+    /* QR Code */
     .share-row {
       display: flex;
-      gap: 20px;
+      gap: 16px;
       align-items: center;
       flex-wrap: wrap;
     }
 
     .qr-box {
-      padding: 10px;
+      padding: 8px;
       background: #ffffff;
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -474,84 +575,52 @@
 
     .share-info {
       flex: 1;
-      min-width: 200px;
+      min-width: 180px;
     }
 
     .pwa-url-label {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--accent);
       word-break: break-all;
-      margin: 6px 0 12px;
+      margin: 6px 0 10px;
     }
 
-    .crud-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .crud-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 14px;
-      background: #fafaf9;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      gap: 10px;
-    }
-
-    .crud-card-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-      flex: 1;
-    }
-
-    .crud-card-img {
-      width: 46px;
-      height: 46px;
-      border-radius: 8px;
-      object-fit: cover;
-      background: #e7e5e4;
-      flex-shrink: 0;
-    }
-
-    .btn-delete {
-      background: #fef2f2;
-      border: 1px solid #fee2e2;
-      color: #dc2626;
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
+    /* Mobile Breakpoint */
     @media (max-width: 900px) {
-      .top-nav { padding: 0 16px; }
-      .content-area { padding: 0 16px; margin: 16px auto 40px; }
-      .editor-grid { grid-template-columns: 1fr; }
-      .mockup-sticky { display: none; }
-      .card { padding: 20px 16px; }
-      .share-row { flex-direction: column; align-items: stretch; }
-      .qr-box { align-self: center; }
-      .crud-card { flex-direction: column; align-items: flex-start; }
-      .crud-card-left { width: 100%; }
-      .btn-delete { align-self: flex-end; width: 100%; margin-top: 6px; }
+      .top-nav { padding: 0 14px; }
+      .content-area { padding: 0 12px; margin: 16px auto 40px; }
+      .editor-grid { 
+        grid-template-columns: 1fr; 
+        gap: 20px;
+      }
+      .mockup-sticky { 
+        position: static;
+        display: flex; 
+        margin-top: 8px;
+      }
+      .card {
+        padding: 18px 14px;
+      }
+      .share-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .qr-box {
+        align-self: center;
+      }
     }
   </style>
 </head>
 <body>
 
+  <!-- Top Nav Oficial -->
   <header class="top-nav">
     <div class="brand-group">
-      <div class="brand-title">Bom Freguês</div>
-      <span class="store-badge" id="top-slug-badge">Painel Admin</span>
+      <a href="#" class="brand-logo-official">
+        Bom Freguês<span class="brand-dot">.</span>
+      </a>
+      <span class="store-badge" id="top-slug-badge">Painel</span>
     </div>
 
     <div class="nav-actions">
@@ -560,6 +629,7 @@
     </div>
   </header>
 
+  <!-- Abas de Navegação -->
   <div class="tabs-bar-container">
     <nav class="tabs-bar">
       <button class="tab-trigger active" onclick="alternarAba('tab-identidade', this)">Identidade & Marca</button>
@@ -579,7 +649,7 @@
           <div class="share-info">
             <span style="font-size:12px; font-weight:700; color:var(--muted);">Link direto do aplicativo:</span>
             <div class="pwa-url-label" id="pwa-url-text">---</div>
-            <button type="button" class="btn-submit" style="background:#f5f5f4; color:#1c1917; border:1px solid #d6d3d1; padding:9px 16px; width:auto;" onclick="copiarLinkPwa()">
+            <button type="button" class="btn-submit" style="background:#f5f5f4; color:#1c1917; border:1px solid #d6d3d1; padding:8px 14px; width:auto;" onclick="copiarLinkPwa()">
               Copiar Link
             </button>
           </div>
@@ -595,12 +665,12 @@
             <div class="form-group">
               <label class="form-label">Nome de usuário do comércio (endereço fixo)</label>
               <input type="text" id="loja-username-fixo" class="input-control" disabled>
-              <span style="font-size: 11px; color: var(--muted);">Este identificador foi definido no cadastro e é imutável para não quebrar o link dos clientes.</span>
+              <span class="form-help-text">Este identificador foi definido no cadastro e é imutável para não quebrar o link dos clientes.</span>
             </div>
 
             <div class="form-group">
               <label class="form-label">Nome Fantasia do Estabelecimento *</label>
-              <input type="text" id="loja-nome" class="input-control" placeholder="Ex: Singelo Brigadeiro" required oninput="atualizarMockupNome(this.value)">
+              <input type="text" id="loja-nome" class="input-control" placeholder="Ex: Singello Brigadeiro" required oninput="atualizarMockupNome(this.value)">
             </div>
 
             <div class="form-group">
@@ -637,19 +707,20 @@
               </div>
             </div>
 
+            <!-- Upload Customizado de Logo -->
             <div class="form-group">
               <label class="form-label">Logotipo da Marca (PNG transparente recomendado)</label>
-              <div class="logo-upload-card">
-                <div class="logo-preview-box" id="thumb-logo-box">
+              <div class="custom-upload-card">
+                <div class="custom-upload-thumb" id="thumb-logo-box">
                   <span style="font-size:24px;">🏪</span>
                 </div>
-                <div class="logo-details">
+                <div class="custom-upload-details">
                   <input type="file" id="loja-logo" accept="image/png, image/webp, image/jpeg" style="display: none;" onchange="processarLogo(event)">
-                  <button type="button" class="btn-select-file-custom" onclick="document.getElementById('loja-logo').click()">
+                  <button type="button" class="btn-choose-file" onclick="document.getElementById('loja-logo').click()">
                     Escolher imagem
                   </button>
-                  <span class="logo-status-txt" id="logo-status-label">
-                    Selecione seu logo em formato PNG com fundo transparente.
+                  <span class="custom-upload-status" id="logo-status-label">
+                    Logo cadastrado com fundo transparente.
                   </span>
                 </div>
               </div>
@@ -661,6 +732,7 @@
           </form>
         </div>
 
+        <!-- Live Preview -->
         <div class="mockup-sticky">
           <div style="font-size:12px; font-weight:700; color:var(--muted); text-align:center; margin-bottom:8px;">
             Prévia em Tempo Real do PWA
@@ -677,8 +749,8 @@
 
             <div class="mockup-body">
               <div class="mockup-card-balance">
-                <div style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase;">Saldo Disponível</div>
                 <div class="mockup-balance-number">100 <span style="font-size:14px; color:#b91c1c;" id="mock-pts-label">pts</span></div>
+                <div style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase;">Saldo Disponível</div>
                 <button type="button" class="btn-submit" id="mock-btn-action" style="width:100%; background:#b91c1c; font-size:12px; padding:10px; margin-top:10px;">
                   Escanear QR Code da Nota
                 </button>
@@ -694,72 +766,118 @@
       </div>
     </section>
 
-    <!-- ABA 2: PROMOÇÕES -->
+    <!-- ABA 2: PROMOÇÕES (Split PC: Criação à esquerda / Publicados à direita) -->
     <section id="tab-promocoes" class="tab-panel">
-      <div class="card">
-        <div class="card-title">Nova Promoção</div>
-        <div class="card-subtitle">Publica a oferta e dispara aviso para os clientes inscritos.</div>
+      <div class="editor-grid">
+        <!-- Coluna Esquerda: Formulário -->
+        <div class="card">
+          <div class="card-title">Nova Promoção</div>
+          <div class="card-subtitle">Publica a oferta no app e dispara notificação push aos clientes inscritos.</div>
 
-        <form onsubmit="criarPromocao(event)">
-          <div class="form-group">
-            <label class="form-label">Título da Oferta *</label>
-            <input type="text" id="promo-titulo" class="input-control" placeholder="Ex: Caixa com 6 Brigadeiros por R$ 25" required>
+          <form onsubmit="criarPromocao(event)">
+            <div class="form-group">
+              <label class="form-label">Título da Oferta *</label>
+              <input type="text" id="promo-titulo" class="input-control" placeholder="Ex: Caixa com 6 Brigadeiros por R$ 25" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Descrição da Oferta *</label>
+              <input type="text" id="promo-desc" class="input-control" placeholder="Ex: Válido até o fim de semana para consumo no local" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Validade *</label>
+              <input type="text" id="promo-validade" class="input-control" placeholder="Ex: Válido até 30/11" required>
+            </div>
+
+            <!-- Upload Customizado de Foto da Promoção -->
+            <div class="form-group">
+              <label class="form-label">Foto da Oferta</label>
+              <div class="custom-upload-card">
+                <div class="custom-upload-thumb" id="thumb-promo-box">
+                  <span style="font-size:20px; color:#a8a29e;">Foto</span>
+                </div>
+                <div class="custom-upload-details">
+                  <input type="file" id="promo-foto" accept="image/*" style="display: none;" onchange="processarFotoPromo(event)">
+                  <button type="button" class="btn-choose-file" onclick="document.getElementById('promo-foto').click()">
+                    Escolher imagem
+                  </button>
+                  <span class="custom-upload-status" id="promo-status-label">
+                    Selecione uma foto atrativa da oferta.
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-post-promo" style="margin-top:10px;">
+              Publicar Promoção
+            </button>
+          </form>
+        </div>
+
+        <!-- Coluna Direita: Vitrine dos Publicados -->
+        <div>
+          <div class="card" style="margin-bottom: 12px; padding: 18px 24px;">
+            <div class="card-title">Promoções Publicadas</div>
+            <div class="card-subtitle" style="margin-bottom: 0;">Como os clientes visualizam no aplicativo.</div>
           </div>
-
-          <div class="form-group">
-            <label class="form-label">Descrição da Oferta *</label>
-            <input type="text" id="promo-desc" class="input-control" placeholder="Ex: Válido até o fim de semana para consumo no local" required>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Validade *</label>
-            <input type="text" id="promo-validade" class="input-control" placeholder="Ex: Válido até 30/11" required>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Foto da Oferta</label>
-            <input type="file" id="promo-foto" accept="image/*" class="input-control" onchange="processarFotoPromo(event)">
-          </div>
-
-          <button type="submit" class="btn-submit" id="btn-post-promo">Publicar Promoção</button>
-        </form>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Promoções Ativas no Ar</div>
-        <div id="lista-promocoes-box" class="crud-list">Carregando promoções...</div>
+          <div id="lista-promocoes-box">Carregando promoções...</div>
+        </div>
       </div>
     </section>
 
-    <!-- ABA 3: FIDELIDADE -->
+    <!-- ABA 3: FIDELIDADE (Split PC: Criação à esquerda / Publicados à direita) -->
     <section id="tab-fidelidade" class="tab-panel">
-      <div class="card">
-        <div class="card-title">Novo Item de Recompensa</div>
-        <div class="card-subtitle">Cadastre os prêmios que os clientes podem trocar por pontos.</div>
+      <div class="editor-grid">
+        <!-- Coluna Esquerda: Formulário -->
+        <div class="card">
+          <div class="card-title">Novo Item de Recompensa</div>
+          <div class="card-subtitle">Cadastre os prêmios que os clientes podem resgatar trocando pontos acumulados.</div>
 
-        <form onsubmit="criarPremio(event)">
-          <div class="form-group">
-            <label class="form-label">Título da Recompensa *</label>
-            <input type="text" id="premio-titulo" class="input-control" placeholder="Ex: Brigadeiro Tradicional Grátis" required>
+          <form onsubmit="criarPremio(event)">
+            <div class="form-group">
+              <label class="form-label">Título da Recompensa *</label>
+              <input type="text" id="premio-titulo" class="input-control" placeholder="Ex: Brigadeiro Tradicional Grátis" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Pontos Necessários *</label>
+              <input type="number" id="premio-pontos" class="input-control" placeholder="Ex: 60" required>
+            </div>
+
+            <!-- Upload Customizado de Foto do Prêmio -->
+            <div class="form-group">
+              <label class="form-label">Foto do Item</label>
+              <div class="custom-upload-card">
+                <div class="custom-upload-thumb" id="thumb-premio-box">
+                  <span style="font-size:20px; color:#a8a29e;">Foto</span>
+                </div>
+                <div class="custom-upload-details">
+                  <input type="file" id="premio-foto" accept="image/*" style="display: none;" onchange="processarFotoPremio(event)">
+                  <button type="button" class="btn-choose-file" onclick="document.getElementById('premio-foto').click()">
+                    Escolher imagem
+                  </button>
+                  <span class="custom-upload-status" id="premio-status-label">
+                    Foto do produto para o catálogo.
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-post-premio" style="margin-top:10px;">
+              Adicionar ao Catálogo
+            </button>
+          </form>
+        </div>
+
+        <!-- Coluna Direita: Catálogo dos Publicados -->
+        <div>
+          <div class="card" style="margin-bottom: 12px; padding: 18px 24px;">
+            <div class="card-title">Catálogo de Recompensas Ativo</div>
+            <div class="card-subtitle" style="margin-bottom: 0;">Itens disponíveis para troca no balcão da loja.</div>
           </div>
-
-          <div class="form-group">
-            <label class="form-label">Pontos Necessários *</label>
-            <input type="number" id="premio-pontos" class="input-control" placeholder="Ex: 60" required>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Foto do Item</label>
-            <input type="file" id="premio-foto" accept="image/*" class="input-control" onchange="processarFotoPremio(event)">
-          </div>
-
-          <button type="submit" class="btn-submit" id="btn-post-premio">Adicionar Recompensa</button>
-        </form>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Catálogo de Recompensas</div>
-        <div id="lista-premios-box" class="crud-list">Carregando catálogo...</div>
+          <div id="lista-premios-box">Carregando catálogo...</div>
+        </div>
       </div>
     </section>
   </main>
@@ -776,6 +894,8 @@
     let logoB64 = null;
     let promoB64 = null;
     let premioB64 = null;
+
+    const FOTO_FALLBACK = "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=500&q=80";
 
     (async function init() {
       const session = await Api.obterSessao();
@@ -819,7 +939,7 @@
       if (loja.logo_url) {
         document.getElementById('mock-logo-wrap').innerHTML = `<img src="${loja.logo_url}" alt="Logo">`;
         document.getElementById('thumb-logo-box').innerHTML = `<img src="${loja.logo_url}" alt="Logo Salvo">`;
-        document.getElementById('logo-status-label').innerText = "Logotipo cadastrado com fundo transparente preservado.";
+        document.getElementById('logo-status-label').innerText = "Logotipo cadastrado com fundo transparente.";
       }
       atualizarMockupNome(loja.nome_fantasia);
 
@@ -845,7 +965,7 @@
 
     function carregarModoCriacao() {
       const preSlug = sessionStorage.getItem('saas_pre_slug') || '';
-      document.getElementById('top-slug-badge').innerText = preSlug ? `@${preSlug}` : "Novo Estabelecimento";
+      document.getElementById('top-slug-badge').innerText = preSlug ? `@${preSlug}` : "Novo";
       document.getElementById('loja-username-fixo').value = preSlug ? `@${preSlug}` : "@seunegocio";
       document.getElementById('btn-save-loja').innerText = "Criar e Publicar App";
       document.getElementById('card-qrcode-divulgacao').style.display = 'none';
@@ -896,7 +1016,7 @@
         logoB64 = await comprimirImagemParaBase64(file, 600);
         document.getElementById('mock-logo-wrap').innerHTML = `<img src="${logoB64}">`;
         document.getElementById('thumb-logo-box').innerHTML = `<img src="${logoB64}">`;
-        document.getElementById('logo-status-label').innerText = `${file.name} com fundo transparente pronto para salvar.`;
+        document.getElementById('logo-status-label').innerText = `${file.name} pronto para salvar.`;
       }
     }
 
@@ -921,7 +1041,6 @@
       try {
         let logoFinalUrl = lojaAtual?.logo_url || '';
 
-        // Salva imagem em PNG no storage garantindo transparência nativa
         if (logoB64 && logoB64.startsWith('data:image')) {
           const base64Data = logoB64.replace(/^data:image\/\w+;base64,/, '');
           const bytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
@@ -988,7 +1107,11 @@
 
     async function processarFotoPromo(e) {
       const f = e.target.files[0];
-      if (f) promoB64 = await comprimirImagemParaBase64(f, 800);
+      if (f) {
+        promoB64 = await comprimirImagemParaBase64(f, 800);
+        document.getElementById('thumb-promo-box').innerHTML = `<img src="${promoB64}">`;
+        document.getElementById('promo-status-label').innerText = `${f.name} selecionada.`;
+      }
     }
 
     async function carregarPromocoes() {
@@ -996,19 +1119,21 @@
       try {
         const itens = await Api.listarPromocoes(lojaAtual.slug);
         if (!itens.length) {
-          box.innerHTML = `<p style="font-size:13px; color:var(--muted); padding:8px 0;">Nenhuma promoção cadastrada.</p>`;
+          box.innerHTML = `<div class="card" style="text-align:center; padding:24px; color:var(--muted); font-size:13px;">Nenhuma promoção cadastrada.</div>`;
           return;
         }
         box.innerHTML = itens.map(p => `
-          <div class="crud-card" id="promo-${p.id}">
-            <div class="crud-card-left">
-              <img class="crud-card-img" src="${p.imagem_url || 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=150&q=80'}">
-              <div style="min-width:0;">
-                <strong style="font-size:13px; display:block; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${p.titulo}</strong>
-                <div style="font-size:11px; color:var(--muted);">${p.validade} • ${p.descricao}</div>
+          <div class="pwa-style-card" id="promo-${p.id}">
+            <img class="pwa-card-media" src="${p.imagem_url || FOTO_FALLBACK}" onerror="this.src='${FOTO_FALLBACK}'">
+            <div class="pwa-card-body">
+              <span class="pwa-card-badge" style="background:${lojaAtual.cor_secundaria || '#fff'}; color:${lojaAtual.cor_destaque || '#b91c1c'};">Oferta da Loja</span>
+              <div class="pwa-card-title">${p.titulo}</div>
+              <div class="pwa-card-desc">${p.descricao}</div>
+              <div class="pwa-card-footer">
+                <span style="font-size:11px; font-weight:700; color:${lojaAtual.cor_destaque || '#b91c1c'};">${p.validade}</span>
+                <button class="btn-delete-clean" onclick="deletarPromo(${p.id})">Excluir Oferta</button>
               </div>
             </div>
-            <button class="btn-delete" onclick="deletarPromo(${p.id})">Excluir</button>
           </div>
         `).join('');
       } catch (e) {
@@ -1037,6 +1162,8 @@
         document.getElementById('promo-titulo').value = '';
         document.getElementById('promo-desc').value = '';
         document.getElementById('promo-validade').value = '';
+        document.getElementById('thumb-promo-box').innerHTML = `<span style="font-size:20px; color:#a8a29e;">Foto</span>`;
+        document.getElementById('promo-status-label').innerText = "Selecione uma foto atrativa da oferta.";
         promoB64 = null;
         await carregarPromocoes();
       } catch (err) {
@@ -1058,7 +1185,11 @@
 
     async function processarFotoPremio(e) {
       const f = e.target.files[0];
-      if (f) premioB64 = await comprimirImagemParaBase64(f, 600);
+      if (f) {
+        premioB64 = await comprimirImagemParaBase64(f, 600);
+        document.getElementById('thumb-premio-box').innerHTML = `<img src="${premioB64}">`;
+        document.getElementById('premio-status-label').innerText = `${f.name} selecionada.`;
+      }
     }
 
     async function carregarPremios() {
@@ -1066,19 +1197,22 @@
       try {
         const itens = await Api.listarPremios(lojaAtual.slug);
         if (!itens.length) {
-          box.innerHTML = `<p style="font-size:13px; color:var(--muted); padding:8px 0;">Nenhum prêmio cadastrado.</p>`;
+          box.innerHTML = `<div class="card" style="text-align:center; padding:24px; color:var(--muted); font-size:13px;">Nenhum prêmio cadastrado.</div>`;
           return;
         }
         box.innerHTML = itens.map(p => `
-          <div class="crud-card" id="premio-${p.id}">
-            <div class="crud-card-left">
-              <img class="crud-card-img" src="${p.imagem_url || 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=150&q=80'}">
-              <div style="min-width:0;">
-                <strong style="font-size:13px; display:block; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${p.titulo}</strong>
-                <div style="font-size:11px; color:#b91c1c; font-weight:700;">${p.pontos} Pontos necessários</div>
+          <div class="pwa-style-card" id="premio-${p.id}">
+            <img class="pwa-card-media" src="${p.imagem_url || FOTO_FALLBACK}" onerror="this.src='${FOTO_FALLBACK}'">
+            <div class="pwa-card-body">
+              <span class="pwa-card-badge" style="background:${lojaAtual.cor_secundaria || '#fff'}; color:${lojaAtual.cor_destaque || '#b91c1c'};">Recompensa</span>
+              <div class="pwa-card-title">${p.titulo}</div>
+              <div class="pwa-card-footer">
+                <span style="font-size:13px; font-weight:800; color:${lojaAtual.cor_destaque || '#b91c1c'}; background:${lojaAtual.cor_secundaria || '#fff'}; padding:4px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06);">
+                  ${p.pontos} Pontos
+                </span>
+                <button class="btn-delete-clean" onclick="deletarPremio(${p.id})">Excluir Item</button>
               </div>
             </div>
-            <button class="btn-delete" onclick="deletarPremio(${p.id})">Excluir</button>
           </div>
         `).join('');
       } catch (e) {
@@ -1104,6 +1238,8 @@
         alert("Recompensa cadastrada!");
         document.getElementById('premio-titulo').value = '';
         document.getElementById('premio-pontos').value = '';
+        document.getElementById('thumb-premio-box').innerHTML = `<span style="font-size:20px; color:#a8a29e;">Item</span>`;
+        document.getElementById('premio-status-label').innerText = "Foto do produto para o catálogo.";
         premioB64 = null;
         await carregarPremios();
       } catch (err) {
