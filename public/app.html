@@ -52,7 +52,7 @@
     /* Header com Logo Livre */
     .top-header {
       background: var(--cor-primaria) !important;
-      padding: 24px 20px 32px 20px !important;
+      padding: 24px 20px 36px 20px !important;
       border-radius: 0 0 28px 28px !important;
       display: flex;
       align-items: center;
@@ -60,6 +60,7 @@
       box-shadow: none !important;
       position: relative;
       z-index: 10;
+      margin-bottom: 0 !important;
     }
 
     .clean-logo-wrap {
@@ -94,23 +95,25 @@
       margin-top: 3px; 
     }
 
-    /* Container Principal */
-    .container-app-shield {
+    /* Blindagem contra regras externas do global.css */
+    .container, .container-app, .container-app-shield {
       max-width: 480px !important;
       margin: 0 auto !important;
       padding: 0 16px !important;
       position: relative;
+      float: none !important;
     }
 
-    /* Camada Flutuante Entre Header e Body */
+    /* Área Flutuante na junção do Header */
     .floating-stack-area {
-      margin-top: -18px;
-      margin-bottom: 22px;
+      margin-top: -20px;
+      margin-bottom: 16px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       position: relative;
       z-index: 30;
+      width: 100%;
     }
 
     .btn-pill-floating {
@@ -119,11 +122,11 @@
       font-size: 13px;
       font-weight: 800;
       cursor: pointer;
-      display: none;
+      display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
       width: 100%;
       transition: transform 0.15s ease, background-color 0.15s ease;
       text-decoration: none;
@@ -151,7 +154,7 @@
       border: 1.5px solid var(--cor-borda);
       border-radius: 18px;
       padding: 14px 18px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
       display: none;
       flex-direction: column;
       gap: 4px;
@@ -175,16 +178,21 @@
       text-decoration: underline;
     }
 
-    /* Título das Seções com Margem Superior Dinâmica Blindada */
+    /* Espaçador Dinâmico Blindado */
+    .section-spacer-top {
+      height: 28px;
+      width: 100%;
+    }
+
+    /* Título das Seções */
     .headline-bar-fixed {
       font-size: 18px !important;
       font-weight: 800 !important;
       color: var(--cor-texto) !important;
-      margin-top: 18px !important;
+      margin-top: 0 !important;
       margin-bottom: 16px !important;
       display: block !important;
       letter-spacing: -0.4px;
-      transition: margin-top 0.2s ease;
     }
 
     /* Cartão de Pontos */
@@ -333,61 +341,123 @@
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 
   <script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    try {
-      await OneSignal.init({
-        appId: "3848f19b-f5ef-45a5-a307-ad0a89725eb1",
-        serviceWorkerParam: { scope: "/" },
-        serviceWorkerPath: "OneSignalSDKWorker.js",
-        welcomeNotification: { disable: true },
-        notifyButton: { enable: false },
-        allowLocalhostAsSecureOrigin: true
-      });
-      
-      if (typeof COMERCIO_SLUG !== 'undefined' && COMERCIO_SLUG) {
-        await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      try {
+        await OneSignal.init({
+          appId: "3848f19b-f5ef-45a5-a307-ad0a89725eb1",
+          serviceWorkerParam: { scope: "/" },
+          serviceWorkerPath: "OneSignalSDKWorker.js",
+          welcomeNotification: { disable: true },
+          notifyButton: { enable: false },
+          allowLocalhostAsSecureOrigin: true
+        });
+
+        if (typeof COMERCIO_SLUG !== 'undefined' && COMERCIO_SLUG) {
+          await OneSignal.User.addTag("comercio_slug", COMERCIO_SLUG);
+        }
+
+        atualizarCamadaInterface();
+        OneSignal.User.PushSubscription.addEventListener("change", atualizarCamadaInterface);
+      } catch (e) {
+        console.warn("OneSignal init:", e);
       }
-      
-      atualizarBotoesFlutuantes();
-      OneSignal.User.PushSubscription.addEventListener("change", atualizarBotoesFlutuantes);
-    } catch (e) {
-      console.error("Erro no OneSignal.init:", e);
+    });
+
+    let deferredPrompt = null;
+    const isIos = () => /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+    const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      atualizarCamadaInterface();
+    });
+
+    function atualizarCamadaInterface() {
+      const btnInstall = document.getElementById('btn-install-action');
+      const btnPush = document.getElementById('btn-push-action');
+      const alertaCpf = document.getElementById('alerta-vincular');
+      const spacer = document.getElementById('section-spacer');
+
+      const standalone = isStandalone();
+
+      // Botão de Instalação: Exibido em qualquer navegador fora de standalone
+      if (!standalone) {
+        btnInstall.style.display = 'flex';
+      } else {
+        btnInstall.style.display = 'none';
+      }
+
+      // Botão de Notificação: Exibido se ainda não concedida
+      let pushHabilitado = false;
+      if ("Notification" in window && Notification.permission === "granted") {
+        pushHabilitado = true;
+      }
+      if (window.OneSignal?.User?.PushSubscription?.optedIn) {
+        pushHabilitado = true;
+      }
+
+      if (!pushHabilitado) {
+        btnPush.style.display = 'flex';
+      } else {
+        btnPush.style.display = 'none';
+      }
+
+      // Controle do espaçador dinâmico: garante distância constante do header
+      const algumCardFlutuante = (btnInstall.style.display === 'flex') || 
+                                 (btnPush.style.display === 'flex') || 
+                                 (alertaCpf.style.display === 'flex');
+
+      if (!algumCardFlutuante) {
+        spacer.style.height = '36px';
+      } else {
+        spacer.style.height = '14px';
+      }
     }
-  });
 
-  async function ativarPush() {
-    const btn = document.getElementById('btn-push-action');
-    if (btn) {
-      btn.innerText = "Verificando...";
-      btn.disabled = true;
+    async function acionarInstalacao() {
+      if (isIos()) {
+        document.getElementById('iosOverlay').style.display = 'block';
+        setTimeout(() => document.getElementById('iosSheet').classList.add('active'), 10);
+      } else if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        if (outcome === 'accepted') {
+          document.getElementById('btn-install-action').style.display = 'none';
+          atualizarCamadaInterface();
+        }
+      } else {
+        alert("Para instalar este app, toque nos três pontos do navegador e selecione 'Adicionar à tela inicial' ou 'Instalar aplicativo'.");
+      }
     }
 
-    try {
-      // Checagem 1: Suporte da API
-      if (!("Notification" in window)) {
-        throw new Error("Seu navegador não suporta notificações Web.");
+    function fecharModalIos() {
+      document.getElementById('iosSheet').classList.remove('active');
+      setTimeout(() => document.getElementById('iosOverlay').style.display = 'none', 300);
+    }
+
+    async function ativarPush() {
+      const btn = document.getElementById('btn-push-action');
+      if (btn) {
+        btn.innerText = "Solicitando...";
+        btn.disabled = true;
       }
 
-      // Checagem 2: Status da permissão
-      const estadoAtual = Notification.permission;
-      if (estadoAtual === "denied") {
-        throw new Error("As notificações foram bloqueadas anteriormente. Toque no ícone de configurações/cadeado na barra de endereços e altere a permissão para 'Permitir'.");
-      }
+      try {
+        if (!("Notification" in window)) {
+          throw new Error("Seu navegador não suporta notificações web.");
+        }
 
-      // Checagem 3: Solicitação nativa direta
-      if (btn) btn.innerText = "Solicitando no sistema...";
-      const respostaPermissao = await Notification.requestPermission();
+        if (Notification.permission === "denied") {
+          throw new Error("As notificações estão bloqueadas nas configurações do navegador para este site.");
+        }
 
-      if (respostaPermissao !== "granted") {
-        throw new Error(`Permissão não concedida (Status: ${respostaPermissao}).`);
-      }
-
-      // Checagem 4: Vinculação no OneSignal
-      if (btn) btn.innerText = "Registrando aparelho...";
-      
-      await new Promise((resolve, reject) => {
-        const timer = setTimeout(() => reject(new Error("Tempo esgotado ao registrar no OneSignal. Verifique se o Site URL no painel bate com este domínio.")), 7000);
+        const perm = await Notification.requestPermission();
+        if (perm !== "granted") {
+          throw new Error("Permissão não concedida pelo usuário.");
+        }
 
         window.OneSignalDeferred.push(async function(OneSignal) {
           try {
@@ -398,27 +468,23 @@
             if (OneSignal.User.PushSubscription) {
               await OneSignal.User.PushSubscription.optIn();
             }
-            clearTimeout(timer);
-            resolve();
-          } catch (sdkErr) {
-            clearTimeout(timer);
-            reject(sdkErr);
+          } catch (e) {
+            console.warn("OneSignal optIn:", e);
           }
         });
-      });
 
-      alert("✅ Notificações ativadas com sucesso!");
-    } catch (err) {
-      alert("Aviso de Notificação:\n" + (err.message || err));
-    } finally {
-      if (btn) {
-        btn.innerText = "Receber avisos de promoções";
-        btn.disabled = false;
+        alert("✅ Notificações ativadas com sucesso!");
+      } catch (err) {
+        alert(err.message || "Não foi possível ativar as notificações.");
+      } finally {
+        if (btn) {
+          btn.innerText = "Receber avisos de promoções";
+          btn.disabled = false;
+        }
+        atualizarCamadaInterface();
       }
-      atualizarBotoesFlutuantes();
     }
-  }
-</script>
+  </script>
 </head>
 <body>
 
@@ -436,17 +502,17 @@
   <div class="container-app-shield">
     <!-- Camada Flutuante Entre o Header e o Conteúdo -->
     <div class="floating-stack-area">
-      <!-- Botão 1: Instalar Aplicativo (quando acessado via navegador web) -->
+      <!-- Botão 1: Instalar Aplicativo -->
       <button id="btn-install-action" class="btn-pill-floating btn-install-floating" onclick="acionarInstalacao()">
         Instalar aplicativo no celular
       </button>
 
-      <!-- Botão 2: Receber Avisos (após instalado no modo PWA) -->
+      <!-- Botão 2: Receber Avisos -->
       <button id="btn-push-action" class="btn-pill-floating btn-push-floating" onclick="ativarPush()">
         Receber avisos de promoções
       </button>
 
-      <!-- Card 3: Recuperação de CPF (na aba de Fidelidade) -->
+      <!-- Card 3: Recuperação de CPF -->
       <div id="alerta-vincular" class="cpf-floating-card">
         <div class="cpf-floating-title">
           Pontos salvos no celular. Vincule seu CPF para não perder seu saldo caso troque de aparelho.
@@ -454,6 +520,9 @@
         <button class="cpf-floating-action" onclick="vincularCpfModal()">Vincular meu CPF agora</button>
       </div>
     </div>
+
+    <!-- Espaçador Blindado contra colapsos de margem do CSS -->
+    <div class="section-spacer-top" id="section-spacer"></div>
 
     <!-- ABA 1: Ofertas -->
     <div id="view-promos" class="tab-view active">
@@ -536,7 +605,7 @@
       } else {
         alertaCpf.style.display = 'none';
       }
-      atualizarBotoesFlutuantes();
+      atualizarCamadaInterface();
     }
 
     async function carregarOfertas() {
@@ -569,7 +638,7 @@
         if (data.cpf) {
           usuarioTemCpfVinculado = true;
           document.getElementById('alerta-vincular').style.display = 'none';
-          atualizarBotoesFlutuantes();
+          atualizarCamadaInterface();
         }
       } catch (e) { document.getElementById('user-pontos').innerHTML = `-- <span>pts</span>`; }
     }
@@ -616,7 +685,7 @@
         const data = await Api.vincularCpf(COMERCIO_SLUG, MEU_DEVICE_ID, limpo);
         usuarioTemCpfVinculado = true;
         document.getElementById('alerta-vincular').style.display = 'none';
-        atualizarBotoesFlutuantes();
+        atualizarCamadaInterface();
         document.getElementById('user-pontos').innerHTML = `${data.pontos} <span>pts</span>`;
         alert("CPF vinculado com sucesso!");
       } catch (e) { alert("Erro: " + e.message); }
@@ -671,7 +740,7 @@
       await carregarOfertas();
       await carregarPontos();
       await carregarPremios();
-      atualizarBotoesFlutuantes();
+      atualizarCamadaInterface();
     })();
   </script>
 </body>
